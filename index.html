@@ -19,9 +19,8 @@
             padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); 
         }
 
-        /* Botones de Raid */
         .btn-raid { 
-            width: 90px; height: 90px; border-radius: 50%; transition: all 0.2s;
+            width: 85px; height: 85px; border-radius: 50%; transition: all 0.2s;
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
             cursor: pointer; text-align: center; border: 3px solid transparent;
         }
@@ -30,34 +29,37 @@
         .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 10px var(--led-yellow); color: var(--led-yellow); }
         .btn-hard { border-color: var(--led-red); box-shadow: 0 0 10px var(--led-red); color: var(--led-red); }
 
-        /* Botón En Camino con Margen Superior */
         .btn-way {
             width: 100%; padding: 14px; border-radius: 12px;
             border: 2px solid var(--led-cyan); color: var(--led-cyan);
             background: rgba(0, 242, 255, 0.1); font-weight: 900;
             text-transform: uppercase; font-size: 12px; letter-spacing: 2px;
-            transition: all 0.2s; cursor: pointer;
-            margin-top: 1.5rem; /* SEPARACIÓN AQUÍ */
+            transition: all 0.2s; cursor: pointer; margin-top: 1rem;
         }
         .btn-way:active { transform: scale(0.98); background: var(--led-cyan); color: black; }
 
-        /* Animaciones */
-        .alert-EASY { animation: pulse-green 0.5s infinite; background: var(--led-green) !important; color: black !important; }
-        .alert-MEDIUM { animation: pulse-yellow 0.4s infinite; background: var(--led-yellow) !important; color: black !important; }
-        .alert-HARD { animation: pulse-red 0.2s infinite; background: var(--led-red) !important; color: white !important; }
-        .alert-WAY { animation: pulse-cyan 0.5s infinite; background: var(--led-cyan) !important; color: black !important; }
-
-        @keyframes pulse-green { 0%, 100% { box-shadow: 0 0 10px var(--led-green); } 50% { box-shadow: 0 0 25px var(--led-green); } }
-        @keyframes pulse-yellow { 0%, 100% { box-shadow: 0 0 10px var(--led-yellow); } 50% { box-shadow: 0 0 25px var(--led-yellow); } }
-        @keyframes pulse-red { 0%, 100% { box-shadow: 0 0 10px var(--led-red); } 50% { box-shadow: 0 0 35px var(--led-red); } }
-        @keyframes pulse-cyan { 0%, 100% { box-shadow: 0 0 10px var(--led-cyan); } 50% { box-shadow: 0 0 25px var(--led-cyan); } }
+        /* Timer Style */
+        #timer-display {
+            font-family: 'JetBrains Mono', monospace; font-weight: 700;
+            font-size: 1.5rem; color: var(--led-cyan); text-shadow: 0 0 10px var(--led-cyan);
+            background: rgba(0, 242, 255, 0.05); border-radius: 10px;
+            padding: 5px 15px; border: 1px dashed rgba(0, 242, 255, 0.3);
+            display: none; justify-content: center; align-items: center; gap: 10px;
+            margin-top: 10px;
+        }
+        .timer-warning { color: var(--led-red) !important; text-shadow: 0 0 10px var(--led-red) !important; animation: blink 0.5s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
 
         .log-container { 
             background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 1rem; font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.7rem; padding: 0.8rem; height: 160px; 
+            font-size: 0.7rem; padding: 0.8rem; height: 140px; 
             overflow-y: auto; color: var(--led-cyan); line-height: 1.4; 
         }
+
+        .alert-EASY { background: var(--led-green) !important; color: black !important; }
+        .alert-MEDIUM { background: var(--led-yellow) !important; color: black !important; }
+        .alert-HARD { background: var(--led-red) !important; color: white !important; }
 
         input[type=range] { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 4px; width: 100%; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--led-cyan); cursor: pointer; border: 2px solid white; }
@@ -97,49 +99,61 @@
 
             <div class="px-2">
                 <button id="wayBtn" class="btn-way">
-                    🏃‍♂️ EN CAMINO
+                    🏃‍♂️ CONFIRMAR EN CAMINO
                 </button>
             </div>
         </div>
 
-        <div id="log" class="log-container">> Link Cloudflare: ONLINE...</div>
+        <div class="flex justify-center">
+            <div id="timer-display">
+                <span class="text-[10px] uppercase opacity-50">Wait:</span>
+                <span id="timer-count">30</span>s
+            </div>
+        </div>
+
+        <div id="log" class="log-container">> System Online...</div>
 
         <div class="flex flex-col items-center pb-1">
             <img src="KitsuLogo2.png" alt="Kitsu DevWorks" class="w-14 h-auto mb-1 opacity-90">
             <div class="text-[8px] text-cyan-400/80 font-bold uppercase tracking-[0.2em]">KitsuDevWorks</div>
-            <div class="text-[6px] text-slate-500 font-bold uppercase opacity-40">Premium Infrastructure • v5.1</div>
+            <div class="text-[6px] text-slate-500 font-bold uppercase opacity-40 italic">Premium Infrastructure • v6.0</div>
         </div>
     </div>
 
-    <audio id="sndAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-    <audio id="sndWay" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+    <audio id="sndEASY" src="https://assets.mixkit.co/active_storage/sfx/2571/2571-preview.mp3" preload="auto"></audio>
+    <audio id="sndMEDIUM" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <audio id="sndHARD" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
+    <audio id="sndWAY" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
 
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2'; 
         const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
 
-        const btns = {
-            EASY: document.getElementById('easyBtn'),
-            MEDIUM: document.getElementById('medBtn'),
-            HARD: document.getElementById('hardBtn'),
-            WAY: document.getElementById('wayBtn')
-        };
-        const sndAlert = document.getElementById('sndAlert');
-        const sndWay = document.getElementById('sndWay');
+        const btns = { EASY: document.getElementById('easyBtn'), MEDIUM: document.getElementById('medBtn'), HARD: document.getElementById('hardBtn'), WAY: document.getElementById('wayBtn') };
+        const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
         const log = document.getElementById('log');
-        const nameField = document.getElementById('userName');
-        const volControl = document.getElementById('volControl');
-        const volLabel = document.getElementById('volLabel');
+        const timerDisplay = document.getElementById('timer-display');
+        const timerCount = document.getElementById('timer-count');
+        
+        let countdown;
 
-        volControl.oninput = (e) => {
-            const v = e.target.value;
-            sndAlert.volume = v;
-            sndWay.volume = v;
-            volLabel.innerText = Math.round(v * 100) + "%";
-        };
+        function startTimer() {
+            clearInterval(countdown);
+            let seconds = 30;
+            timerDisplay.style.display = 'flex';
+            timerCount.innerText = seconds;
+            timerDisplay.classList.remove('timer-warning');
 
-        function addLog(msg, color) {
-            log.innerHTML = `<div style="color:${color}">> ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} - ${msg}</div>` + log.innerHTML;
+            countdown = setInterval(() => {
+                seconds--;
+                timerCount.innerText = seconds;
+                if (seconds <= 10) timerDisplay.classList.add('timer-warning');
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    timerDisplay.style.display = 'none';
+                    addLog("TIEMPO AGOTADO - INICIANDO RAID", "#fff");
+                }
+            }, 1000);
         }
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
@@ -147,36 +161,29 @@
 
         channel.bind('client-sos', function(data) {
             const [name, type] = data.user.split('|');
+            const s = sounds[type];
             const b = btns[type];
             const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
 
-            if (type === 'WAY') {
-                sndWay.currentTime = 0;
-                sndWay.play().catch(()=>{});
-                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
-                btns.WAY.classList.add('alert-WAY');
-                setTimeout(() => btns.WAY.classList.remove('alert-WAY'), 3000);
-            } else {
-                sndAlert.currentTime = 0;
-                sndAlert.play().catch(()=>{});
+            if(s) { s.currentTime = 0; s.play().catch(()=>{}); }
+            
+            if (type !== 'WAY') {
+                startTimer();
                 addLog(`¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
                 if(b) {
                     b.classList.add('alert-' + type);
                     setTimeout(() => b.classList.remove('alert-' + type), 4000);
                 }
+            } else {
+                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
             }
         });
 
         async function sendSignal(type) {
-            const user = nameField.value.trim() || "Aliado";
+            const user = document.getElementById('userName').value.trim() || "Aliado";
             Object.values(btns).forEach(b => b.disabled = true);
             try {
-                await fetch(CLOUDFLARE_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    body: JSON.stringify({ user: `${user}|${type}` })
-                });
-                addLog(`Señal ${type} enviada...`, '#666');
+                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) });
             } catch (e) { addLog("Error Uplink", "#ff00e5"); }
             setTimeout(() => Object.values(btns).forEach(b => b.disabled = false), 2000);
         }
@@ -185,6 +192,16 @@
         btns.MEDIUM.onclick = () => sendSignal('MEDIUM');
         btns.HARD.onclick = () => sendSignal('HARD');
         btns.WAY.onclick = () => sendSignal('WAY');
+
+        function addLog(msg, color) {
+            log.innerHTML = `<div style="color:${color}">> ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} - ${msg}</div>` + log.innerHTML;
+        }
+
+        document.getElementById('volControl').oninput = (e) => {
+            const v = e.target.value;
+            Object.values(sounds).forEach(s => s.volume = v);
+            document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
+        };
     </script>
 </body>
 </html>
