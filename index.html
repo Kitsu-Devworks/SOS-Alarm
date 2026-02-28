@@ -75,48 +75,51 @@
             volPercent.innerText = Math.round(e.target.value * 100) + "%";
         };
 
-        const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
-        const channel = pusher.subscribe('dungeon-channel');
+        // CONEXIÓN DIRECTA (Saltamos Pipedream)
+        const pusher = new Pusher(PUSHER_KEY, { 
+            cluster: CLUSTER, 
+            forceTLS: true,
+            userAuthentication: { endpoint: "" }, // No necesitamos servidor
+            channelAuthorization: { endpoint: "" }
+        });
 
-        // Escuchar alertas de otros
+        // Usamos prefijo 'private-' porque Pusher lo exige para Client Events
+        const channel = pusher.subscribe('private-dungeon');
+
+        // Escuchar alertas de otros amigos
         channel.bind('client-sos', function(data) {
             sound.pause();
             sound.currentTime = 0;
-            sound.play().catch(() => addLog("Toca la pantalla para oír!", true));
+            sound.play().catch(() => addLog("⚠️ Toca la pantalla para activar!", true));
             
             btn.classList.add('alert-active');
-            const nick = (data.user || "Alguien").toUpperCase();
+            const nick = (data.user || "Aliado").toUpperCase();
             addLog(`🔥 ¡${nick} PIDE AYUDA PARA DUNG!`);
             
             setTimeout(() => btn.classList.remove('alert-active'), 6000);
         });
 
-        // Enviar alerta
-        btn.onclick = async () => {
+        // Enviar alerta al equipo
+        btn.onclick = () => {
             const user = nameField.value.trim().substring(0, 8);
             if (!user) {
-                addLog("ERROR: Escribe tu nick primero", true);
+                addLog("ERROR: Pon tu nombre", true);
                 return;
             }
             
             localStorage.setItem('kitsu_user', user);
             btn.disabled = true;
 
-            // Usamos un servicio de relay profesional para disparar el evento en Pusher
-            // Esto evita los problemas de seguridad de los canales privados
-            try {
-                await fetch('https://eo8pk6pez8jqbml.m.pipedream.net', {
-                    method: 'POST',
-                    body: JSON.stringify({ user: user }),
-                    headers: { 'Content-Type': 'application/json' },
-                    mode: 'no-cors'
-                });
-                
+            // Disparamos el evento directamente a Pusher
+            const success = channel.trigger('client-sos', { user: user });
+            
+            if (success) {
                 addLog(`Convocando al equipo como ${user.toUpperCase()}...`);
+                // Sonido local para saber que presionamos bien
                 sound.currentTime = 0;
                 sound.play();
-            } catch (e) {
-                addLog("Fallo en la red...", true);
+            } else {
+                addLog("ERROR: Activa 'Client Events' en Pusher", true);
             }
 
             setTimeout(() => btn.disabled = false, 4000);
