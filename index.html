@@ -15,8 +15,6 @@
         .btn-sos:disabled { opacity: 0.4; filter: grayscale(1); }
         .alert-active { animation: glitch 0.15s infinite; background: var(--led-yellow) !important; color: black !important; }
         @keyframes glitch { 0% { transform: scale(0.95); } 50% { transform: translate(-2px, 2px) scale(0.95); } 100% { transform: translate(2px, -2px) scale(0.95); } }
-        .volume-slider { -webkit-appearance: none; width: 100%; height: 4px; background: rgba(0, 242, 255, 0.2); border-radius: 5px; outline: none; }
-        .volume-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--led-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--led-cyan); }
         .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 0.8rem; height: 100px; overflow-y: auto; color: var(--led-cyan); line-height: 1.5; }
     </style>
 </head>
@@ -24,27 +22,24 @@
     <div class="main-card">
         <div class="text-center">
             <h1 class="text-2xl font-black italic text-cyan-400 tracking-tighter">DUNGEON CALL</h1>
-            <input type="text" id="userName" placeholder="Tu Nickname (8 max)" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-xs p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-3/4 text-center">
+            <input type="text" id="userName" placeholder="Nick (8 max)" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-xs p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-3/4 text-center">
         </div>
 
-        <div class="px-4 mt-2">
-            <div class="flex justify-between text-[10px] text-cyan-400 mb-1 font-bold uppercase">
-                <span>Volumen</span> <span id="volPercent">50%</span>
-            </div>
-            <input type="range" id="volControl" min="0" max="1" step="0.05" value="0.5" class="volume-slider">
+        <div class="px-4 mt-2 text-center">
+            <div class="text-[10px] text-cyan-400 mb-1 font-bold uppercase">Volumen</div>
+            <input type="range" id="volControl" min="0" max="1" step="0.05" value="0.5" class="w-full">
         </div>
 
         <div class="flex justify-center items-center">
             <button id="alertBtn" class="btn-sos group">
-                <span class="text-5xl mb-1 group-hover:scale-110 transition-transform">⚔️</span>
+                <span class="text-5xl mb-1">⚔️</span>
                 <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">Llamar Team</span>
             </button>
         </div>
 
-        <div id="log" class="log-container">> Esperando al equipo...</div>
+        <div id="log" class="log-container">> Link con Cloudflare estable...</div>
 
         <div class="flex flex-col items-center">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="h-8 w-auto" onerror="this.style.display='none'">
             <div class="text-[8px] text-slate-500 font-bold uppercase opacity-60">Kitsu DevWorks © 2026</div>
         </div>
     </div>
@@ -52,77 +47,46 @@
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        const PUSHER_KEY = '78831e6e7f703ddd4fb2';
-        const CLUSTER = 'us2';
+        const PUSHER_KEY = '78831e6e7f703ddd4fb2'; // Tu Key [cite: 2026-02-23]
+        const CLUSTER = 'us2'; // Tu Cluster [cite: 2026-02-28]
+        const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev'; // Tu Worker [cite: 2026-02-28]
 
         const btn = document.getElementById('alertBtn');
         const sound = document.getElementById('alertSound');
         const log = document.getElementById('log');
         const nameField = document.getElementById('userName');
-        const volControl = document.getElementById('volControl');
-        const volPercent = document.getElementById('volPercent');
-
-        sound.volume = 0.5;
-        nameField.value = localStorage.getItem('kitsu_user') || "";
 
         function addLog(msg, isError = false) {
             const color = isError ? 'text-pink-500' : 'text-cyan-400';
             log.innerHTML = `<div class="${color}">> ${msg}</div>` + log.innerHTML;
         }
 
-        volControl.oninput = (e) => {
-            sound.volume = e.target.value;
-            volPercent.innerText = Math.round(e.target.value * 100) + "%";
-        };
+        const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
+        const channel = pusher.subscribe('dungeon-channel');
 
-        // CONEXIÓN DIRECTA (Saltamos Pipedream)
-        const pusher = new Pusher(PUSHER_KEY, { 
-            cluster: CLUSTER, 
-            forceTLS: true,
-            userAuthentication: { endpoint: "" }, // No necesitamos servidor
-            channelAuthorization: { endpoint: "" }
-        });
-
-        // Usamos prefijo 'private-' porque Pusher lo exige para Client Events
-        const channel = pusher.subscribe('private-dungeon');
-
-        // Escuchar alertas de otros amigos
         channel.bind('client-sos', function(data) {
-            sound.pause();
             sound.currentTime = 0;
-            sound.play().catch(() => addLog("⚠️ Toca la pantalla para activar!", true));
-            
+            sound.play().catch(() => addLog("⚠️ Toca para oír!", true));
             btn.classList.add('alert-active');
-            const nick = (data.user || "Aliado").toUpperCase();
-            addLog(`🔥 ¡${nick} PIDE AYUDA PARA DUNG!`);
-            
-            setTimeout(() => btn.classList.remove('alert-active'), 6000);
+            addLog(`🔥 ¡${data.user.toUpperCase()} PIDE DUNG!`);
+            setTimeout(() => btn.classList.remove('alert-active'), 5000);
         });
 
-        // Enviar alerta al equipo
-        btn.onclick = () => {
-            const user = nameField.value.trim().substring(0, 8);
-            if (!user) {
-                addLog("ERROR: Pon tu nombre", true);
-                return;
-            }
-            
-            localStorage.setItem('kitsu_user', user);
+        btn.onclick = async () => {
+            const user = nameField.value.trim() || "Aliado";
             btn.disabled = true;
-
-            // Disparamos el evento directamente a Pusher
-            const success = channel.trigger('client-sos', { user: user });
-            
-            if (success) {
-                addLog(`Convocando al equipo como ${user.toUpperCase()}...`);
-                // Sonido local para saber que presionamos bien
-                sound.currentTime = 0;
+            try {
+                await fetch(CLOUDFLARE_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user: user })
+                });
+                addLog(`Enviando señal como ${user.toUpperCase()}...`);
                 sound.play();
-            } else {
-                addLog("ERROR: Activa 'Client Events' en Pusher", true);
+            } catch (e) {
+                addLog("Error de Uplink", true);
             }
-
-            setTimeout(() => btn.disabled = false, 4000);
+            setTimeout(() => btn.disabled = false, 3000);
         };
     </script>
 </body>
