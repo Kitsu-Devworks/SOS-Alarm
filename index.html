@@ -12,7 +12,7 @@
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
         .main-card { 
-            width: 95%; max-width: 450px; height: 90vh; max-height: 750px; 
+            width: 95%; max-width: 450px; height: 92vh; max-height: 800px; 
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
             border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; 
             display: flex; flex-direction: column; justify-content: space-between; 
@@ -20,7 +20,7 @@
         }
 
         .btn-sos { 
-            width: 160px; height: 160px; border-radius: 50%; 
+            width: 140px; height: 140px; border-radius: 50%; 
             border: 4px solid var(--led-yellow); background: transparent; 
             box-shadow: 0 0 15px var(--led-yellow); cursor: pointer; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
@@ -34,16 +34,14 @@
         .log-container { 
             background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); 
             border-radius: 1rem; font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.75rem; padding: 0.8rem; height: 100px; 
+            font-size: 0.75rem; padding: 0.8rem; height: 160px; /* Log más grande */
             overflow-y: auto; color: var(--led-cyan); line-height: 1.5; 
         }
 
-        /* Estilo Custom para el Slider */
         input[type=range] { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; width: 100%; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--led-cyan); cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); border: 2px solid white; }
 
-        .logo-glow { filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.6)); transition: all 0.3s; }
-        .logo-glow:hover { filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.9)); transform: scale(1.05); }
+        .logo-glow { filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.4)); transition: all 0.3s; }
     </style>
 </head>
 <body>
@@ -64,17 +62,19 @@
 
         <div class="flex justify-center items-center">
             <button id="alertBtn" class="btn-sos">
-                <span class="text-5xl mb-1">⚔️</span>
-                <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">Enviar SOS</span>
+                <span class="text-4xl mb-1">⚔️</span>
+                <span class="text-[8px] font-bold text-yellow-400 uppercase tracking-widest">Enviar SOS</span>
             </button>
         </div>
 
         <div id="log" class="log-container">> Link Cloudflare: ONLINE...</div>
 
         <div class="flex flex-col items-center pb-2">
-            <img src="KitsuLogo2.png" alt="Kitsu DevWorks" class="logo-glow w-36 h-auto mb-2">
-            <div class="text-[8px] text-slate-500 font-bold uppercase opacity-50 tracking-[0.3em]">
-                Premium Infrastructure © 2026
+            <img src="KitsuLogo2.png" alt="Kitsu DevWorks" class="logo-glow w-20 h-auto mb-2 opacity-90"> <div class="text-[9px] text-cyan-400/80 font-bold uppercase tracking-[0.2em] mb-1">
+                KitsuDevWorks
+            </div>
+            <div class="text-[7px] text-slate-500 font-bold uppercase opacity-40 tracking-wider">
+                Premium Infrastructure • v2.0
             </div>
         </div>
     </div>
@@ -82,10 +82,9 @@
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        // CONFIGURACIÓN [cite: 2026-02-23, 2026-02-28]
-        const PUSHER_KEY = '78831e6e7f703ddd4fb2';
-        const CLUSTER = 'us2';
-        const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
+        const PUSHER_KEY = '78831e6e7f703ddd4fb2'; // [cite: 2026-02-23]
+        const CLUSTER = 'us2'; // [cite: 2026-02-28]
+        const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev'; // [cite: 2026-02-28]
 
         const btn = document.getElementById('alertBtn');
         const sound = document.getElementById('alertSound');
@@ -94,7 +93,6 @@
         const volControl = document.getElementById('volControl');
         const volLabel = document.getElementById('volLabel');
 
-        // Lógica de Volumen
         sound.volume = 0.5;
         volControl.oninput = (e) => {
             const val = e.target.value;
@@ -107,7 +105,6 @@
             log.innerHTML = `<div class="${color}">> ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${msg}</div>` + log.innerHTML;
         }
 
-        // Pusher Setup
         const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
         const channel = pusher.subscribe('dungeon-channel');
 
@@ -119,27 +116,22 @@
             setTimeout(() => btn.classList.remove('alert-active'), 5000);
         });
 
-        // Click Acción
         btn.onclick = async () => {
             const user = nameField.value.trim() || "Aliado";
             btn.disabled = true;
-            
             try {
-                // Llamada a tu Worker de Cloudflare
                 await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
-                    mode: 'no-cors', // Para evitar problemas de CORS rápidos
+                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user: user })
                 });
-                
                 addLog(`Uplink enviado como ${user.toUpperCase()}`);
                 sound.currentTime = 0;
                 sound.play();
             } catch (e) {
                 addLog("Error de Uplink", true);
             }
-            
             setTimeout(() => btn.disabled = false, 3000);
         };
     </script>
