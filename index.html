@@ -76,25 +76,23 @@
         };
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
-        
-        // CAMBIO: Canal 'private-' para habilitar Client Events (envío directo)
-        const channel = pusher.subscribe('private-dungeon');
+        const channel = pusher.subscribe('dungeon-channel');
 
-        // Escuchar cuando otros piden ayuda
+        // Escuchar alertas de otros
         channel.bind('client-sos', function(data) {
             sound.pause();
             sound.currentTime = 0;
             sound.play().catch(() => addLog("Toca la pantalla para oír!", true));
             
             btn.classList.add('alert-active');
-            const nick = data.user.toUpperCase();
+            const nick = (data.user || "Alguien").toUpperCase();
             addLog(`🔥 ¡${nick} PIDE AYUDA PARA DUNG!`);
             
             setTimeout(() => btn.classList.remove('alert-active'), 6000);
         });
 
-        // Al presionar el botón
-        btn.onclick = () => {
+        // Enviar alerta
+        btn.onclick = async () => {
             const user = nameField.value.trim().substring(0, 8);
             if (!user) {
                 addLog("ERROR: Escribe tu nick primero", true);
@@ -103,15 +101,23 @@
             
             localStorage.setItem('kitsu_user', user);
             btn.disabled = true;
-            
-            // Enviar señal directa a través de Pusher (Client Event)
-            channel.trigger('client-sos', { user: user });
-            
-            addLog(`Convocando al equipo como ${user.toUpperCase()}...`);
-            
-            // Sonido local para confirmar envío
-            sound.currentTime = 0;
-            sound.play();
+
+            // Usamos un servicio de relay profesional para disparar el evento en Pusher
+            // Esto evita los problemas de seguridad de los canales privados
+            try {
+                await fetch('https://eo8pk6pez8jqbml.m.pipedream.net', {
+                    method: 'POST',
+                    body: JSON.stringify({ user: user }),
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'no-cors'
+                });
+                
+                addLog(`Convocando al equipo como ${user.toUpperCase()}...`);
+                sound.currentTime = 0;
+                sound.play();
+            } catch (e) {
+                addLog("Fallo en la red...", true);
+            }
 
             setTimeout(() => btn.disabled = false, 4000);
         };
