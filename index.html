@@ -17,50 +17,68 @@
             display: flex; align-items: center; justify-content: center;
         }
         .main-card {
-            width: 95%; max-width: 450px; height: 90vh; max-height: 700px;
+            width: 95%; max-width: 450px; height: 90vh; max-height: 750px;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
             border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem;
             display: flex; flex-direction: column; justify-content: space-between;
-            padding: 2rem; position: relative;
+            padding: 1.5rem; position: relative;
         }
         .btn-sos {
-            width: 180px; height: 180px; border-radius: 50%;
+            width: 160px; height: 160px; border-radius: 50%;
             border: 4px solid var(--led-yellow); background: transparent;
-            box-shadow: 0 0 15px var(--led-yellow), inset 0 0 15px var(--led-yellow);
+            box-shadow: 0 0 15px var(--led-yellow), inset 0 0 10px var(--led-yellow);
             transition: all 0.2s ease; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
         .alert-active { animation: glitch 0.15s infinite; background: var(--led-yellow) !important; color: black !important; }
         @keyframes glitch { 0% { transform: translate(0) scale(0.95); } 50% { transform: translate(-2px, 2px) scale(0.95); } 100% { transform: translate(2px, -2px) scale(0.95); } }
+        
+        /* Estilo Slider Gamer */
+        .volume-slider {
+            -webkit-appearance: none; width: 100%; height: 4px;
+            background: rgba(0, 242, 255, 0.2); border-radius: 5px; outline: none;
+        }
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 15px; height: 15px;
+            background: var(--led-cyan); border-radius: 50%; cursor: pointer;
+            box-shadow: 0 0 10px var(--led-cyan);
+        }
+
         .log-container {
             background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1rem; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem; padding: 1rem; height: 100px; overflow-y: auto; color: var(--led-cyan);
+            font-size: 0.7rem; padding: 0.8rem; height: 80px; overflow-y: auto; color: var(--led-cyan);
         }
-        /* Estilo para el input de nombre */
-        #nameInput { background: rgba(0,0,0,0.5); border: 1px solid var(--led-cyan); color: white; padding: 5px; border-radius: 5px; text-align: center; margin-top: 10px; width: 80%; }
     </style>
 </head>
 <body>
 
     <div class="main-card">
         <div class="text-center">
-            <h1 class="text-3xl font-black italic tracking-tighter text-cyan-400">SOS SYSTEM</h1>
-            <input type="text" id="userName" placeholder="Tu Nickname..." class="bg-black/50 border border-cyan-500/50 text-white text-xs p-2 rounded mt-2 font-mono outline-none focus:border-cyan-400">
+            <h1 class="text-2xl font-black italic tracking-tighter text-cyan-400">SOS SYSTEM</h1>
+            <input type="text" id="userName" placeholder="Tu Nickname..." class="bg-black/50 border border-cyan-500/50 text-white text-xs p-2 rounded mt-2 font-mono outline-none focus:border-cyan-400 w-3/4">
+        </div>
+
+        <div class="px-4">
+            <div class="flex justify-between text-[10px] text-cyan-400 mb-1 font-bold uppercase tracking-widest">
+                <span>Volumen</span>
+                <span id="volPercent">50%</span>
+            </div>
+            <input type="range" id="volControl" min="0" max="1" step="0.1" value="0.5" class="volume-slider">
         </div>
 
         <div class="flex justify-center items-center">
             <button id="alertBtn" class="btn-sos group">
-                <span id="icon" class="text-6xl mb-1">🔔</span>
-                <span class="text-[10px] font-bold text-yellow-400 tracking-widest uppercase">Send Signal</span>
+                <span id="icon" class="text-5xl mb-1">🔔</span>
+                <span class="text-[9px] font-bold text-yellow-400 tracking-widest uppercase">Send Signal</span>
             </button>
         </div>
 
-        <div id="log" class="log-container">> System initialized...</div>
+        <div id="log" class="log-container">> Audio system ready...</div>
 
-        <div class="flex flex-col items-center gap-2">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="h-12 w-auto object-contain">
-            <div class="text-[9px] text-slate-500 font-bold tracking-widest uppercase opacity-60">Kitsu DevWorks © 2026</div>
+        <div class="flex flex-col items-center gap-1">
+            <img src="KitsuLogo2.png" alt="Kitsu" class="h-10 w-auto object-contain">
+            <div class="text-[8px] text-slate-500 font-bold tracking-widest uppercase opacity-60">Kitsu DevWorks © 2026</div>
         </div>
     </div>
 
@@ -78,32 +96,38 @@
         const sound = document.getElementById('alertSound');
         const log = document.getElementById('log');
         const nameField = document.getElementById('userName');
+        const volControl = document.getElementById('volControl');
+        const volPercent = document.getElementById('volPercent');
 
-        // Cargar nombre guardado [cite: 2026-02-23]
+        // Configuración inicial de audio [cite: 2026-02-23]
+        sound.volume = 0.5;
         nameField.value = localStorage.getItem('kitsu_user') || "";
+
+        // Control de volumen en tiempo real [cite: 2026-02-23]
+        volControl.oninput = (e) => {
+            const val = e.target.value;
+            sound.volume = val;
+            volPercent.innerText = Math.round(val * 100) + "%";
+        };
 
         function addLog(msg) {
             log.innerHTML = `> ${msg}<br>` + log.innerHTML;
         }
 
         channel.bind('alerta-event', function(data) { [cite: 2026-02-23]
-            sound.play();
+            sound.play().catch(() => addLog("Haz clic para activar audio!"));
             btn.classList.add('alert-active');
-            const sender = data.user || "Alguien";
+            const sender = data.user || "Anónimo";
             addLog(`ALERTA DE: ${sender.toUpperCase()}`);
-
             setTimeout(() => { btn.classList.remove('alert-active'); }, 5000);
         });
 
         btn.onclick = async () => {
             const user = nameField.value.trim() || "Anónimo";
-            localStorage.setItem('kitsu_user', user); // Guardar para la próxima vez [cite: 2026-02-23]
-            
+            localStorage.setItem('kitsu_user', user); [cite: 2026-02-23]
             btn.disabled = true;
             addLog(`Enviando señal como: ${user}...`);
-            
             try {
-                // Enviamos el nombre a Pipedream [cite: 2026-02-23]
                 await fetch(PIPEDREAM_URL, { 
                     method: 'POST', 
                     body: JSON.stringify({ user: user }),
@@ -111,8 +135,7 @@
                     mode: 'no-cors' 
                 });
                 addLog("Transmisión exitosa.");
-            } catch (e) { addLog("Error de conexión."); }
-            
+            } catch (e) { addLog("Error de Uplink."); }
             setTimeout(() => { btn.disabled = false; }, 3000);
         };
     </script>
