@@ -33,7 +33,6 @@
         .alert-active { animation: glitch 0.15s infinite; background: var(--led-yellow) !important; color: black !important; }
         @keyframes glitch { 0% { transform: translate(0) scale(0.95); } 50% { transform: translate(-2px, 2px) scale(0.95); } 100% { transform: translate(2px, -2px) scale(0.95); } }
         
-        /* Estilo Slider Gamer */
         .volume-slider {
             -webkit-appearance: none; width: 100%; height: 4px;
             background: rgba(0, 242, 255, 0.2); border-radius: 5px; outline: none;
@@ -56,7 +55,7 @@
     <div class="main-card">
         <div class="text-center">
             <h1 class="text-2xl font-black italic tracking-tighter text-cyan-400">SOS SYSTEM</h1>
-            <input type="text" id="userName" placeholder="Tu Nickname..." class="bg-black/50 border border-cyan-500/50 text-white text-xs p-2 rounded mt-2 font-mono outline-none focus:border-cyan-400 w-3/4">
+            <input type="text" id="userName" placeholder="Nickname (8 max)" maxlength="8" class="bg-black/50 border border-cyan-500/50 text-white text-xs p-2 rounded mt-2 font-mono outline-none focus:border-cyan-400 w-3/4 text-center">
         </div>
 
         <div class="px-4">
@@ -74,7 +73,7 @@
             </button>
         </div>
 
-        <div id="log" class="log-container">> Audio system ready...</div>
+        <div id="log" class="log-container">> Restricted Access...</div>
 
         <div class="flex flex-col items-center gap-1">
             <img src="KitsuLogo2.png" alt="Kitsu" class="h-10 w-auto object-contain">
@@ -99,11 +98,9 @@
         const volControl = document.getElementById('volControl');
         const volPercent = document.getElementById('volPercent');
 
-        // Configuración inicial de audio [cite: 2026-02-23]
         sound.volume = 0.5;
         nameField.value = localStorage.getItem('kitsu_user') || "";
 
-        // Control de volumen en tiempo real [cite: 2026-02-23]
         volControl.oninput = (e) => {
             const val = e.target.value;
             sound.volume = val;
@@ -115,18 +112,18 @@
         }
 
         channel.bind('alerta-event', function(data) { [cite: 2026-02-23]
-            sound.play().catch(() => addLog("Haz clic para activar audio!"));
+            sound.play().catch(() => addLog("Click para sonido!"));
             btn.classList.add('alert-active');
             const sender = data.user || "Anónimo";
-            addLog(`ALERTA DE: ${sender.toUpperCase()}`);
+            addLog(`ALERTA: ${sender.toUpperCase()}`);
             setTimeout(() => { btn.classList.remove('alert-active'); }, 5000);
         });
 
         btn.onclick = async () => {
-            const user = nameField.value.trim() || "Anónimo";
+            const user = nameField.value.trim().substring(0, 8) || "Anónimo"; [cite: 2026-02-23]
             localStorage.setItem('kitsu_user', user); [cite: 2026-02-23]
             btn.disabled = true;
-            addLog(`Enviando señal como: ${user}...`);
+            addLog(`Signal: ${user}...`);
             try {
                 await fetch(PIPEDREAM_URL, { 
                     method: 'POST', 
@@ -134,8 +131,8 @@
                     headers: { 'Content-Type': 'application/json' },
                     mode: 'no-cors' 
                 });
-                addLog("Transmisión exitosa.");
-            } catch (e) { addLog("Error de Uplink."); }
+                addLog("Sent successfully.");
+            } catch (e) { addLog("Link Error."); }
             setTimeout(() => { btn.disabled = false; }, 3000);
         };
     </script>
