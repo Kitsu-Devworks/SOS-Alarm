@@ -76,7 +76,9 @@
         };
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
-        const channel = pusher.subscribe('cache-dungeon');
+        
+        // CAMBIO: Canal 'private-' para habilitar Client Events (envío directo)
+        const channel = pusher.subscribe('private-dungeon');
 
         // Escuchar cuando otros piden ayuda
         channel.bind('client-sos', function(data) {
@@ -102,8 +104,9 @@
             localStorage.setItem('kitsu_user', user);
             btn.disabled = true;
             
-            // Enviar señal a los demás
+            // Enviar señal directa a través de Pusher (Client Event)
             channel.trigger('client-sos', { user: user });
+            
             addLog(`Convocando al equipo como ${user.toUpperCase()}...`);
             
             // Sonido local para confirmar envío
