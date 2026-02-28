@@ -10,82 +10,136 @@
     <style>
         :root { --led-cyan: #00f2ff; --led-pink: #ff00e5; --led-yellow: #facc15; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-        .main-card { width: 95%; max-width: 450px; height: 90vh; max-height: 750px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-        .btn-sos { width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--led-yellow); background: transparent; box-shadow: 0 0 15px var(--led-yellow); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.2s; }
-        .btn-sos:disabled { opacity: 0.4; filter: grayscale(1); }
+        
+        .main-card { 
+            width: 95%; max-width: 450px; height: 90vh; max-height: 750px; 
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
+            border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; 
+            display: flex; flex-direction: column; justify-content: space-between; 
+            padding: 1.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+        }
+
+        .btn-sos { 
+            width: 160px; height: 160px; border-radius: 50%; 
+            border: 4px solid var(--led-yellow); background: transparent; 
+            box-shadow: 0 0 15px var(--led-yellow); cursor: pointer; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            transition: all 0.2s; 
+        }
+        .btn-sos:active { transform: scale(0.9); }
+        
         .alert-active { animation: glitch 0.15s infinite; background: var(--led-yellow) !important; color: black !important; }
         @keyframes glitch { 0% { transform: scale(0.95); } 50% { transform: translate(-2px, 2px) scale(0.95); } 100% { transform: translate(2px, -2px) scale(0.95); } }
-        .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; padding: 0.8rem; height: 100px; overflow-y: auto; color: var(--led-cyan); line-height: 1.5; }
+
+        .log-container { 
+            background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); 
+            border-radius: 1rem; font-family: 'JetBrains Mono', monospace; 
+            font-size: 0.75rem; padding: 0.8rem; height: 100px; 
+            overflow-y: auto; color: var(--led-cyan); line-height: 1.5; 
+        }
+
+        /* Estilo Custom para el Slider */
+        input[type=range] { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: var(--led-cyan); cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); border: 2px solid white; }
+
+        .logo-glow { filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.6)); transition: all 0.3s; }
+        .logo-glow:hover { filter: drop-shadow(0 0 15px rgba(0, 242, 255, 0.9)); transform: scale(1.05); }
     </style>
 </head>
 <body>
+
     <div class="main-card">
         <div class="text-center">
             <h1 class="text-2xl font-black italic text-cyan-400 tracking-tighter">DUNGEON CALL</h1>
-            <input type="text" id="userName" placeholder="Nick (8 max)" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-xs p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-3/4 text-center">
+            <input type="text" id="userName" placeholder="TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-xs p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-3/4 text-center uppercase">
         </div>
 
-        <div class="px-4 mt-2 text-center">
-            <div class="text-[10px] text-cyan-400 mb-1 font-bold uppercase">Volumen</div>
-            <input type="range" id="volControl" min="0" max="1" step="0.05" value="0.5" class="w-full">
+        <div class="px-6">
+            <div class="flex justify-between text-[10px] text-cyan-400 mb-2 font-bold uppercase tracking-widest">
+                <span>Audio Output</span>
+                <span id="volLabel">50%</span>
+            </div>
+            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.5">
         </div>
 
         <div class="flex justify-center items-center">
-            <button id="alertBtn" class="btn-sos group">
+            <button id="alertBtn" class="btn-sos">
                 <span class="text-5xl mb-1">⚔️</span>
-                <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">Llamar Team</span>
+                <span class="text-[9px] font-bold text-yellow-400 uppercase tracking-widest">Enviar SOS</span>
             </button>
         </div>
 
-        <div id="log" class="log-container">> Link con Cloudflare estable...</div>
+        <div id="log" class="log-container">> Link Cloudflare: ONLINE...</div>
 
-        <div class="flex flex-col items-center">
-            <div class="text-[8px] text-slate-500 font-bold uppercase opacity-60">Kitsu DevWorks © 2026</div>
+        <div class="flex flex-col items-center pb-2">
+            <img src="KitsuLogo2.png" alt="Kitsu DevWorks" class="logo-glow w-36 h-auto mb-2">
+            <div class="text-[8px] text-slate-500 font-bold uppercase opacity-50 tracking-[0.3em]">
+                Premium Infrastructure © 2026
+            </div>
         </div>
     </div>
 
     <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        const PUSHER_KEY = '78831e6e7f703ddd4fb2'; // Tu Key [cite: 2026-02-23]
-        const CLUSTER = 'us2'; // Tu Cluster [cite: 2026-02-28]
-        const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev'; // Tu Worker [cite: 2026-02-28]
+        // CONFIGURACIÓN [cite: 2026-02-23, 2026-02-28]
+        const PUSHER_KEY = '78831e6e7f703ddd4fb2';
+        const CLUSTER = 'us2';
+        const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
 
         const btn = document.getElementById('alertBtn');
         const sound = document.getElementById('alertSound');
         const log = document.getElementById('log');
         const nameField = document.getElementById('userName');
+        const volControl = document.getElementById('volControl');
+        const volLabel = document.getElementById('volLabel');
+
+        // Lógica de Volumen
+        sound.volume = 0.5;
+        volControl.oninput = (e) => {
+            const val = e.target.value;
+            sound.volume = val;
+            volLabel.innerText = Math.round(val * 100) + "%";
+        };
 
         function addLog(msg, isError = false) {
             const color = isError ? 'text-pink-500' : 'text-cyan-400';
-            log.innerHTML = `<div class="${color}">> ${msg}</div>` + log.innerHTML;
+            log.innerHTML = `<div class="${color}">> ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} - ${msg}</div>` + log.innerHTML;
         }
 
+        // Pusher Setup
         const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER, forceTLS: true });
         const channel = pusher.subscribe('dungeon-channel');
 
         channel.bind('client-sos', function(data) {
             sound.currentTime = 0;
-            sound.play().catch(() => addLog("⚠️ Toca para oír!", true));
+            sound.play().catch(() => addLog("⚠️ INTERACCIÓN REQUERIDA", true));
             btn.classList.add('alert-active');
-            addLog(`🔥 ¡${data.user.toUpperCase()} PIDE DUNG!`);
+            addLog(`🔥 ¡${data.user.toUpperCase()} CONVOCA AL EQUIPO!`);
             setTimeout(() => btn.classList.remove('alert-active'), 5000);
         });
 
+        // Click Acción
         btn.onclick = async () => {
             const user = nameField.value.trim() || "Aliado";
             btn.disabled = true;
+            
             try {
+                // Llamada a tu Worker de Cloudflare
                 await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
+                    mode: 'no-cors', // Para evitar problemas de CORS rápidos
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user: user })
                 });
-                addLog(`Enviando señal como ${user.toUpperCase()}...`);
+                
+                addLog(`Uplink enviado como ${user.toUpperCase()}`);
+                sound.currentTime = 0;
                 sound.play();
             } catch (e) {
                 addLog("Error de Uplink", true);
             }
+            
             setTimeout(() => btn.disabled = false, 3000);
         };
     </script>
