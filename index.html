@@ -10,19 +10,23 @@
     
     <style>
         :root { --led-cyan: #00f2ff; --led-pink: #ff00e5; --led-yellow: #facc15; }
+        
         body { 
             font-family: 'Orbitron', sans-serif; 
             background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%);
             height: 100vh; margin: 0; overflow: hidden;
             display: flex; align-items: center; justify-content: center;
         }
+        
         .main-card {
             width: 95%; max-width: 450px; height: 90vh; max-height: 750px;
             background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px);
             border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem;
             display: flex; flex-direction: column; justify-content: space-between;
             padding: 1.5rem; position: relative;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0, 242, 255, 0.05);
         }
+        
         .btn-sos {
             width: 160px; height: 160px; border-radius: 50%;
             border: 4px solid var(--led-yellow); background: transparent;
@@ -30,8 +34,21 @@
             transition: all 0.2s ease; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .alert-active { animation: glitch 0.15s infinite; background: var(--led-yellow) !important; color: black !important; }
-        @keyframes glitch { 0% { transform: translate(0) scale(0.95); } 50% { transform: translate(-2px, 2px) scale(0.95); } 100% { transform: translate(2px, -2px) scale(0.95); } }
+        
+        .btn-sos:active:not(:disabled) { transform: scale(0.95); }
+        .btn-sos:disabled { opacity: 0.5; cursor: not-allowed; border-color: gray; box-shadow: none; }
+        
+        .alert-active { 
+            animation: glitch 0.15s infinite; 
+            background: var(--led-yellow) !important; 
+            color: black !important; 
+        }
+        
+        @keyframes glitch { 
+            0% { transform: translate(0) scale(0.95); } 
+            50% { transform: translate(-2px, 2px) scale(0.95); } 
+            100% { transform: translate(2px, -2px) scale(0.95); } 
+        }
         
         .volume-slider {
             -webkit-appearance: none; width: 100%; height: 4px;
@@ -46,52 +63,55 @@
         .log-container {
             background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 1rem; font-family: 'JetBrains Mono', monospace;
-            font-size: 0.7rem; padding: 0.8rem; height: 80px; overflow-y: auto; color: var(--led-cyan);
+            font-size: 0.7rem; padding: 0.8rem; height: 90px; overflow-y: auto; color: var(--led-cyan);
+            line-height: 1.4;
         }
+        
+        /* Animación de error para el input */
+        .input-error { border-color: var(--led-pink) !important; box-shadow: 0 0 10px var(--led-pink); }
     </style>
 </head>
 <body>
 
     <div class="main-card">
         <div class="text-center">
-            <h1 class="text-2xl font-black italic tracking-tighter text-cyan-400">SOS SYSTEM</h1>
-            <input type="text" id="userName" placeholder="Nickname (8 max)" maxlength="8" class="bg-black/50 border border-cyan-500/50 text-white text-xs p-2 rounded mt-2 font-mono outline-none focus:border-cyan-400 w-3/4 text-center">
+            <h1 class="text-2xl font-black italic tracking-tighter text-cyan-400" style="text-shadow: 0 0 10px #00f2ff;">SOS SYSTEM</h1>
+            <input type="text" id="userName" placeholder="Nickname (Max 8)" maxlength="8" autocomplete="off"
+                   class="bg-black/60 border border-cyan-500/50 text-white text-xs p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-3/4 text-center transition-all">
         </div>
 
-        <div class="px-4">
+        <div class="px-4 mt-2">
             <div class="flex justify-between text-[10px] text-cyan-400 mb-1 font-bold uppercase tracking-widest">
                 <span>Volumen</span>
                 <span id="volPercent">50%</span>
             </div>
-            <input type="range" id="volControl" min="0" max="1" step="0.1" value="0.5" class="volume-slider">
+            <input type="range" id="volControl" min="0" max="1" step="0.05" value="0.5" class="volume-slider">
         </div>
 
-        <div class="flex justify-center items-center">
+        <div class="flex justify-center items-center my-4">
             <button id="alertBtn" class="btn-sos group">
                 <span id="icon" class="text-5xl mb-1">🔔</span>
-                <span class="text-[9px] font-bold text-yellow-400 tracking-widest uppercase">Send Signal</span>
+                <span class="text-[9px] font-bold text-yellow-400 tracking-widest uppercase mt-1">Send Signal</span>
             </button>
         </div>
 
-        <div id="log" class="log-container">> Restricted Access...</div>
+        <div id="log" class="log-container">> System initialized...</div>
 
-        <div class="flex flex-col items-center gap-1">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="h-10 w-auto object-contain">
+        <div class="flex flex-col items-center gap-1 mt-2">
+            <img src="KitsuLogo2.png" alt="Kitsu" class="h-8 w-auto object-contain drop-shadow-md" onerror="this.style.display='none'">
             <div class="text-[8px] text-slate-500 font-bold tracking-widest uppercase opacity-60">Kitsu DevWorks © 2026</div>
         </div>
     </div>
 
-    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
     <script>
-        // Configuración limpia sin marcas de error
-        const PUSHER_KEY = '78831e6e7f703ddd4fb2'; // [cite: 2026-02-23]
-        const CLUSTER = 'us2'; // [cite: 2026-02-23]
-        const PIPEDREAM_URL = 'https://eo8pk6pez8jqbml.m.pipedream.net'; // [cite: 2026-02-23]
+        // --- CONFIGURACIÓN ---
+        const PUSHER_KEY = '78831e6e7f703ddd4fb2';
+        const CLUSTER = 'us2';
+        const PIPEDREAM_URL = 'https://eo8pk6pez8jqbml.m.pipedream.net';
 
-        const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER });
-        const channel = pusher.subscribe('dungeon-channel');
-        
+        // --- ELEMENTOS DEL DOM ---
         const btn = document.getElementById('alertBtn');
         const sound = document.getElementById('alertSound');
         const log = document.getElementById('log');
@@ -99,45 +119,71 @@
         const volControl = document.getElementById('volControl');
         const volPercent = document.getElementById('volPercent');
 
+        // --- INICIALIZACIÓN ---
         sound.volume = 0.5;
         nameField.value = localStorage.getItem('kitsu_user') || "";
 
-        volControl.oninput = (e) => {
+        // Sistema de Logs Profesional
+        function addLog(msg, isError = false) {
+            const time = new Date().toLocaleTimeString([], { hour12: false });
+            const colorClass = isError ? 'text-pink-500 font-bold' : 'text-cyan-400';
+            log.innerHTML = `<div class="${colorClass}">[${time}] ${msg}</div>` + log.innerHTML;
+        }
+
+        // Control de Volumen en Tiempo Real
+        volControl.addEventListener('input', (e) => {
             const val = e.target.value;
             sound.volume = val;
             volPercent.innerText = Math.round(val * 100) + "%";
-        };
+        });
 
-        function addLog(msg) {
-            log.innerHTML = `> ${msg}<br>` + log.innerHTML;
-        }
+        // --- CONEXIÓN PUSHER ---
+        const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER });
+        const channel = pusher.subscribe('dungeon-channel');
 
         channel.bind('alerta-event', function(data) {
-            sound.play().catch(() => addLog("Click para sonido!"));
+            // Rebobinar y reproducir audio garantizado
+            sound.pause();
+            sound.currentTime = 0;
+            sound.play().catch(() => addLog("⚠️ Audio bloqueado por el navegador. Haz clic en la página.", true));
+            
+            // Efecto visual
             btn.classList.add('alert-active');
             
-            // Verificamos si Pipedream envía el usuario como string JSON o texto puro
-            let sender = "Anónimo";
+            // Parseo seguro de datos
+            let sender = "Desconocido";
             try {
-                if(typeof data === 'string') {
-                    const parsed = JSON.parse(data);
-                    sender = parsed.user || "Anónimo";
-                } else if (data && data.user) {
-                    sender = data.user;
-                }
+                const parsedData = typeof data === 'string' ? JSON.parse(data) : data;
+                sender = parsedData.user || "Desconocido";
             } catch(e) {
-                sender = data || "Anónimo";
+                sender = data || "Desconocido";
             }
             
-            addLog(`ALERTA: ${sender.toString().toUpperCase()}`);
+            addLog(`>> ALERTA DE: ${sender.toString().toUpperCase()}`);
+            
+            // Apagar efecto después de 5 segundos
             setTimeout(() => { btn.classList.remove('alert-active'); }, 5000);
         });
 
-        btn.onclick = async () => {
-            const user = nameField.value.trim().substring(0, 8) || "Anónimo";
+        // --- LÓGICA DEL BOTÓN ---
+        btn.addEventListener('click', async () => {
+            const user = nameField.value.trim().substring(0, 8);
+            
+            // 1. VALIDACIÓN: Evitar envío si no hay nombre
+            if (!user) {
+                addLog("ERROR: Debes ingresar un Nickname.", true);
+                nameField.classList.add('input-error', 'animate-pulse');
+                setTimeout(() => nameField.classList.remove('input-error', 'animate-pulse'), 1500);
+                nameField.focus(); // Hace que el teclado se abra automáticamente en celulares
+                return; 
+            }
+
+            // 2. GUARDAR Y BLOQUEAR BOTÓN
             localStorage.setItem('kitsu_user', user);
             btn.disabled = true;
-            addLog(`Signal: ${user}...`);
+            addLog(`Transmitiendo señal [${user}]...`);
+
+            // 3. ENVIAR A PIPEDREAM
             try {
                 await fetch(PIPEDREAM_URL, { 
                     method: 'POST', 
@@ -145,10 +191,14 @@
                     headers: { 'Content-Type': 'application/json' },
                     mode: 'no-cors' 
                 });
-                addLog("Sent successfully.");
-            } catch (e) { addLog("Link Error."); }
+                addLog("Transmisión confirmada.");
+            } catch (e) { 
+                addLog("Fallo de conexión uplink.", true); 
+            }
+
+            // 4. DESBLOQUEAR BOTÓN
             setTimeout(() => { btn.disabled = false; }, 3000);
-        };
+        });
     </script>
 </body>
 </html>
