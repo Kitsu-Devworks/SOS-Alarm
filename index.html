@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SOS | SQUAD ALERT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Orbitron', sans-serif; background-color: #020617; }
+        .bg-radar {
+            background: radial-gradient(circle, rgba(234, 179, 8, 0.07) 0%, rgba(2, 6, 23, 1) 75%);
+        }
+        .pulse-yellow {
+            animation: pulse-animation 1.5s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0px rgba(234, 179, 8, 0.7); }
+            100% { box-shadow: 0 0 0 25px rgba(234, 179, 8, 0); }
+        }
+    </style>
+</head>
+<body class="text-slate-100 min-h-screen flex items-center justify-center bg-radar p-4">
+
+    <div class="relative z-10 w-full max-w-sm p-8 bg-slate-900/90 backdrop-blur-lg border border-slate-800 rounded-[2.5rem] shadow-2xl text-center">
+        
+        <div class="mb-8">
+            <h1 class="text-6xl font-black tracking-tighter text-yellow-500 italic drop-shadow-[0_0_15px_rgba(234,179,8,0.4)]">SOS</h1>
+            <p class="text-slate-500 mt-2 text-[10px] tracking-[0.4em] uppercase font-bold">Dungeon Protocol</p>
+        </div>
+
+        <div class="relative flex justify-center items-center my-12">
+            <div id="ring" class="absolute w-44 h-44 border-2 border-yellow-500/10 rounded-full transition-all duration-700"></div>
+            
+            <button id="alertBtn" class="relative z-20 w-36 h-36 bg-slate-800 hover:bg-yellow-500 text-yellow-500 hover:text-slate-950 border-4 border-yellow-500 rounded-full flex items-center justify-center text-6xl transition-all duration-300 active:scale-90 active:rotate-12 shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+                <span id="icon">🔔</span>
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            <p id="status" class="text-xs font-bold text-slate-500 tracking-[0.2em] uppercase">Sistema en Standby</p>
+            <div class="flex justify-center gap-3 text-[9px] font-mono">
+                <span class="px-2 py-1 bg-slate-950 border border-slate-800 rounded text-emerald-500">CL 🇨🇱</span>
+                <span class="px-2 py-1 bg-slate-950 border border-slate-800 rounded text-emerald-500">PE 🇵🇪</span>
+                <span class="px-2 py-1 bg-slate-950 border border-slate-800 rounded text-emerald-500">AR 🇦🇷</span>
+            </div>
+        </div>
+
+        <div id="log" class="mt-8 h-28 overflow-y-auto text-[10px] font-mono text-left text-yellow-500/40 bg-black/60 p-4 rounded-xl border border-slate-800/50 scrollbar-hide">
+            > SOS System v1.0.4 Online...<br>
+            > Esperando input de usuario...
+        </div>
+    </div>
+
+    <audio id="alertSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
+
+    <script>
+        // CONFIGURACIÓN INTEGRADA [cite: 2026-02-23]
+        const PUSHER_KEY = '78831e6e7f703ddd4fb2';
+        const CLUSTER = 'us2';
+        const PIPEDREAM_URL = 'https://eo8pk6pez8jqbml.m.pipedream.net'; 
+
+        const pusher = new Pusher(PUSHER_KEY, { cluster: CLUSTER });
+        const channel = pusher.subscribe('dungeon-channel');
+        
+        const btn = document.getElementById('alertBtn');
+        const ring = document.getElementById('ring');
+        const sound = document.getElementById('alertSound');
+        const statusText = document.getElementById('status');
+        const log = document.getElementById('log');
+        const icon = document.getElementById('icon');
+
+        function addLog(msg) {
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML += `<div class="mt-1 border-t border-white/5 pt-1 text-slate-500">[${time}] <span class="text-yellow-500/80">${msg}</span></div>`;
+            log.scrollTop = log.scrollHeight;
+        }
+
+        // 1. RECEPTOR: Cuando alguien activa el SOS
+        channel.bind('alerta-event', function() {
+            sound.play();
+            statusText.innerText = "¡ALERTA SOS DETECTADA!";
+            statusText.classList.replace('text-slate-500', 'text-yellow-500');
+            btn.classList.add('pulse-yellow', 'bg-yellow-500', 'text-slate-950');
+            ring.classList.add('scale-[1.8]', 'opacity-0', 'border-yellow-500');
+            icon.innerText = "⚔️";
+            addLog("ALERTA RECIBIDA: ¡A LAS MAZMORRAS!");
+
+            setTimeout(() => {
+                statusText.innerText = "Sistema en Standby";
+                statusText.classList.replace('text-yellow-500', 'text-slate-500');
+                btn.classList.remove('pulse-yellow', 'bg-yellow-500', 'text-slate-950');
+                ring.classList.remove('scale-[1.8]', 'opacity-0', 'border-yellow-500');
+                icon.innerText = "🔔";
+            }, 6000);
+        });
+
+        // 2. EMISOR: Cuando tú presionas el botón
+        btn.onclick = async () => {
+            btn.disabled = true;
+            addLog("Transmitiendo SOS a la party...");
+            
+            try {
+                // Envío al puente de Pipedream
+                await fetch(PIPEDREAM_URL, {
+                    method: 'POST',
+                    mode: 'no-cors'
+                });
+                addLog("Transmisión exitosa. Esperando Squad.");
+            } catch (error) {
+                addLog("ERROR: Fallo en el uplink satelital.");
+            }
+
+            setTimeout(() => { btn.disabled = false; }, 2000);
+        };
+
+        // Evento de conexión inicial
+        pusher.connection.bind('connected', () => {
+            addLog("Enlace cifrado con Pusher: [ESTABLE]");
+        });
+    </script>
+</body>
+</html>
