@@ -30,13 +30,14 @@
         .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 10px var(--led-yellow); color: var(--led-yellow); }
         .btn-hard { border-color: var(--led-red); box-shadow: 0 0 10px var(--led-red); color: var(--led-red); }
 
-        /* Botón En Camino (Ancho) */
+        /* Botón En Camino con Margen Superior */
         .btn-way {
-            width: 100%; padding: 12px; border-radius: 12px;
+            width: 100%; padding: 14px; border-radius: 12px;
             border: 2px solid var(--led-cyan); color: var(--led-cyan);
             background: rgba(0, 242, 255, 0.1); font-weight: 900;
             text-transform: uppercase; font-size: 12px; letter-spacing: 2px;
             transition: all 0.2s; cursor: pointer;
+            margin-top: 1.5rem; /* SEPARACIÓN AQUÍ */
         }
         .btn-way:active { transform: scale(0.98); background: var(--led-cyan); color: black; }
 
@@ -78,40 +79,40 @@
             <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.5">
         </div>
 
-        <div class="flex justify-between items-center px-1">
-            <button id="easyBtn" class="btn-raid btn-easy">
-                <span class="text-xl">🛡️</span>
-                <span class="text-[7px] font-black uppercase">Easy</span>
-            </button>
-            <button id="medBtn" class="btn-raid btn-medium">
-                <span class="text-xl">⚔️</span>
-                <span class="text-[7px] font-black uppercase">Medium</span>
-            </button>
-            <button id="hardBtn" class="btn-raid btn-hard">
-                <span class="text-xl">💀</span>
-                <span class="text-[7px] font-black uppercase">Hard</span>
-            </button>
+        <div>
+            <div class="flex justify-between items-center px-1">
+                <button id="easyBtn" class="btn-raid btn-easy">
+                    <span class="text-xl">🛡️</span>
+                    <span class="text-[7px] font-black uppercase">Easy</span>
+                </button>
+                <button id="medBtn" class="btn-raid btn-medium">
+                    <span class="text-xl">⚔️</span>
+                    <span class="text-[7px] font-black uppercase">Medium</span>
+                </button>
+                <button id="hardBtn" class="btn-raid btn-hard">
+                    <span class="text-xl">💀</span>
+                    <span class="text-[7px] font-black uppercase">Hard</span>
+                </button>
+            </div>
+
+            <div class="px-2">
+                <button id="wayBtn" class="btn-way">
+                    🏃‍♂️ CONFIRMAR EN CAMINO
+                </button>
+            </div>
         </div>
 
-        <div class="px-2">
-            <button id="wayBtn" class="btn-way">
-                🏃‍♂️ CONFIRMAR EN CAMINO
-            </button>
-        </div>
-
-        <div id="log" class="log-container">> System Online...</div>
+        <div id="log" class="log-container">> Link Cloudflare: ONLINE...</div>
 
         <div class="flex flex-col items-center pb-1">
             <img src="KitsuLogo2.png" alt="Kitsu DevWorks" class="w-14 h-auto mb-1 opacity-90">
             <div class="text-[8px] text-cyan-400/80 font-bold uppercase tracking-[0.2em]">KitsuDevWorks</div>
-            <div class="text-[6px] text-slate-500 font-bold uppercase opacity-40 italic">Premium Infrastructure • v4.5</div>
+            <div class="text-[6px] text-slate-500 font-bold uppercase opacity-40">Premium Infrastructure • v5.1</div>
         </div>
     </div>
 
+    <audio id="sndAlert" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
     <audio id="sndWay" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
-    <audio id="sndEasy" src="https://assets.mixkit.co/active_storage/sfx/1103/1103-preview.mp3" preload="auto"></audio>
-    <audio id="sndMed" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-    <audio id="sndHard" src="https://assets.mixkit.co/active_storage/sfx/951/951-preview.mp3" preload="auto"></audio>
 
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2'; 
@@ -123,13 +124,8 @@
             HARD: document.getElementById('hardBtn'),
             WAY: document.getElementById('wayBtn')
         };
-        const sounds = {
-            EASY: document.getElementById('sndEasy'),
-            MEDIUM: document.getElementById('sndMed'),
-            HARD: document.getElementById('sndHard'),
-            WAY: document.getElementById('sndWay')
-        };
-        
+        const sndAlert = document.getElementById('sndAlert');
+        const sndWay = document.getElementById('sndWay');
         const log = document.getElementById('log');
         const nameField = document.getElementById('userName');
         const volControl = document.getElementById('volControl');
@@ -137,7 +133,8 @@
 
         volControl.oninput = (e) => {
             const v = e.target.value;
-            Object.values(sounds).forEach(s => s.volume = v);
+            sndAlert.volume = v;
+            sndWay.volume = v;
             volLabel.innerText = Math.round(v * 100) + "%";
         };
 
@@ -150,18 +147,19 @@
 
         channel.bind('client-sos', function(data) {
             const [name, type] = data.user.split('|');
-            const s = sounds[type];
             const b = btns[type];
             const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
 
-            if(s) { s.currentTime = 0; s.play().catch(()=>{}); }
-            
             if (type === 'WAY') {
-                addLog(`${name.toUpperCase()} VA EN CAMINO AL RESCATE!`, colors.WAY);
+                sndWay.currentTime = 0;
+                sndWay.play().catch(()=>{});
+                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
                 btns.WAY.classList.add('alert-WAY');
                 setTimeout(() => btns.WAY.classList.remove('alert-WAY'), 3000);
             } else {
-                addLog(`${name.toUpperCase()} CONVOCA DUNG ${type} Y RAID!`, colors[type]);
+                sndAlert.currentTime = 0;
+                sndAlert.play().catch(()=>{});
+                addLog(`¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
                 if(b) {
                     b.classList.add('alert-' + type);
                     setTimeout(() => b.classList.remove('alert-' + type), 4000);
@@ -172,16 +170,14 @@
         async function sendSignal(type) {
             const user = nameField.value.trim() || "Aliado";
             Object.values(btns).forEach(b => b.disabled = true);
-            
             try {
                 await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({ user: `${user}|${type}` })
                 });
-                addLog(`Enviando señal ${type}...`, '#666');
+                addLog(`Señal ${type} enviada...`, '#666');
             } catch (e) { addLog("Error Uplink", "#ff00e5"); }
-            
             setTimeout(() => Object.values(btns).forEach(b => b.disabled = false), 2000);
         }
 
