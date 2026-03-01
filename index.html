@@ -15,18 +15,20 @@
 
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
 
-        /* VOLUMEN FIJO - NO SE MUEVE */
-        .vol-sidebar { position: absolute; left: -65px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 40px; }
-        .vol-label { width: 40px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 10px; color: var(--led-cyan); margin-bottom: 8px; }
+        /* VOLUMEN PRO Y FIJO */
+        .vol-sidebar { position: absolute; left: -75px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 60px; pointer-events: all; }
+        .vol-label { width: 60px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 10px; }
         
         input[type=range].vertical { 
-            appearance: none; -webkit-appearance: none; width: 10px; height: 180px; 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 5px; outline: none;
+            appearance: none; -webkit-appearance: none; width: 8px; height: 200px; 
+            background: linear-gradient(to bottom, rgba(0, 242, 255, 0.2), rgba(0, 0, 0, 0.5));
+            border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 10px; outline: none;
             -webkit-appearance: slider-vertical;
         }
         input[type=range].vertical::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 20px; height: 10px; background: var(--led-cyan); 
-            box-shadow: 0 0 10px var(--led-cyan); border: 1px solid #fff; cursor: pointer;
+            -webkit-appearance: none; width: 18px; height: 18px; 
+            background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; 
+            transform: rotate(45deg); box-shadow: 0 0 15px var(--led-cyan); cursor: pointer;
         }
 
         /* ONLINE */
@@ -42,20 +44,17 @@
 
         .pro-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fff, var(--led-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
 
-        /* BOTONES GAMER */
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; opacity: 0.15; transition: 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; filter: grayscale(0) !important; cursor: pointer; }
         .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
-        /* TIMER FIJO CON ANIMACIÓN */
         .timer-block { height: 60px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; flex-shrink: 0; }
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
         .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* LOG DENTRO DEL BOX */
         .log-container { 
             background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); 
             border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; 
@@ -120,12 +119,26 @@
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
-            if (!hasName) { diffButtons.forEach(b => b.classList.remove('enabled')); wayBtn.classList.remove('enabled'); return; }
+            if (!hasName) { 
+                diffButtons.forEach(b => b.classList.remove('enabled')); 
+                wayBtn.classList.remove('enabled'); 
+                wayBtn.classList.add('pointer-events-none');
+                return; 
+            }
+
             if (isTimerActive) {
                 diffButtons.forEach(b => b.classList.remove('enabled'));
-                (!hasConfirmedWay) ? wayBtn.classList.add('enabled') : wayBtn.classList.remove('enabled');
+                if (!hasConfirmedWay) {
+                    wayBtn.classList.add('enabled');
+                    wayBtn.classList.remove('pointer-events-none');
+                } else {
+                    wayBtn.classList.remove('enabled');
+                    wayBtn.classList.add('pointer-events-none');
+                }
             } else {
-                diffButtons.forEach(b => b.classList.add('enabled')); wayBtn.classList.remove('enabled');
+                diffButtons.forEach(b => b.classList.add('enabled'));
+                wayBtn.classList.remove('enabled');
+                wayBtn.classList.add('pointer-events-none');
             }
         }
 
