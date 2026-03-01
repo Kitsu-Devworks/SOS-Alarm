@@ -11,15 +11,14 @@
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        /* Contenedor relativo para que nada se mueva */
-        .app-container { position: relative; display: flex; align-items: center; justify-content: center; }
+        .app-container { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 800px; }
 
-        /* VOLUMEN VERTICAL (POSICIÓN FIJA IZQUIERDA) */
-        .vol-sidebar { position: absolute; left: -60px; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px; }
+        /* VOLUMEN VERTICAL FIJO */
+        .vol-sidebar { position: absolute; left: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 50px; }
         input[type=range].vertical { appearance: slider-vertical; width: 8px; height: 180px; background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.3); cursor: pointer; }
 
-        /* VIÑETA OPERADORES (POSICIÓN FIJA DERECHA) */
-        .online-sidebar { position: absolute; right: -140px; width: 120px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; }
+        /* VIÑETA OPERADORES FIJA */
+        .online-sidebar { position: absolute; right: 0; width: 130px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; }
         .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; margin-bottom: 4px; }
         .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); }
 
@@ -31,6 +30,9 @@
             padding: 1.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); 
         }
 
+        /* SEPARACIÓN DE 0.5cm (aprox 19px) */
+        .header-section { margin-bottom: 19px; }
+
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
@@ -39,12 +41,10 @@
         .btn-hard { border-color: var(--led-red); box-shadow: 0 0 10px var(--led-red); color: var(--led-red); }
         .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1rem; }
 
-        .timer-slot { height: 40px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        .timer-slot { height: 40px; display: flex; align-items: center; justify-content: center; }
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); display: none; }
 
         .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 0.8rem; height: 200px; overflow-y: auto; color: var(--led-cyan); margin-top: 20px; }
-
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 14px; width: 14px; border-radius: 50%; background: var(--led-cyan); border: 2px solid white; }
     </style>
 </head>
 <body>
@@ -57,7 +57,7 @@
         </div>
 
         <div class="main-card">
-            <div class="text-center">
+            <div class="text-center header-section">
                 <h1 class="text-lg font-black italic text-cyan-400">DUNGEON RAID CONTROL</h1>
                 <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
             </div>
@@ -87,19 +87,16 @@
         </div>
     </div>
 
-    <audio id="sndEASY" src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3"></audio>
-    <audio id="sndMEDIUM" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3"></audio>
-    <audio id="sndHARD" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3"></audio>
-    <audio id="sndWAY" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3"></audio>
-
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
         const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
         const nameField = document.getElementById('userName');
         const diffButtons = document.querySelectorAll('.btn-raid');
         const wayBtn = document.getElementById('wayBtn');
-        const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
-        let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
+        const sounds = { EASY: new Audio('https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3'), MEDIUM: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'), HARD: new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'), WAY: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3') };
+        
+        let countdown, isTimerActive = false, hasConfirmedWay = false;
+        let onlineUsers = {};
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
@@ -112,13 +109,17 @@
             }
         }
 
-        function startTimer() {
-            clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
-            let s = 30; document.getElementById('timer-display').style.display = 'flex';
-            countdown = setInterval(() => {
-                s--; document.getElementById('timer-count').innerText = s;
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; document.getElementById('timer-display').style.display = 'none'; updateUI(); }
-            }, 1000);
+        function renderOnline() {
+            const now = Date.now();
+            let html = '';
+            let count = 0;
+            for (let u in onlineUsers) {
+                if (now - onlineUsers[u] > 20000) { delete onlineUsers[u]; continue; }
+                html += `<div class="user-tag"><div class="status-dot"></div>${u}</div>`;
+                count++;
+            }
+            document.getElementById('userList').innerHTML = html;
+            document.getElementById('userCount').innerText = count;
         }
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
@@ -126,15 +127,38 @@
 
         channel.bind('client-sos', (data) => {
             const [name, type] = data.user.split('|');
-            if (sounds[type]) { sounds[type].currentTime = 0; sounds[type].play().catch(()=>{}); }
-            if (type !== 'WAY') { startTimer(); addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type); }
-            else { addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY'); }
+            onlineUsers[name.toUpperCase()] = Date.now();
+            renderOnline();
+            
+            if (type === 'PULSE') return;
+
+            const s = sounds[type];
+            if (s) { s.currentTime = 0; s.play().catch(()=>{}); }
+            
+            if (type !== 'WAY') {
+                startTimer();
+                addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type);
+            } else {
+                addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY');
+            }
         });
 
         async function sendSignal(type) {
-            const user = nameField.value.trim(); if (!user || user.length < 2) return;
+            const user = nameField.value.trim();
+            if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
-            try { await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) }); } catch (e) {}
+            try {
+                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) });
+            } catch (e) {}
+        }
+
+        function startTimer() {
+            clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
+            let s = 30; document.getElementById('timer-display').style.display = 'flex';
+            countdown = setInterval(() => {
+                s--; document.getElementById('timer-count').innerText = s;
+                if (s <= 0) { clearInterval(countdown); isTimerActive = false; document.getElementById('timer-display').style.display = 'none'; updateUI(); }
+            }, 1000);
         }
 
         function addLog(msg, type) {
@@ -149,6 +173,13 @@
             document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
         };
 
+        // Enviar pulso cada 10s para el contador de gente
+        setInterval(() => {
+            const user = nameField.value.trim();
+            if (user.length >= 2) sendSignal('PULSE');
+        }, 10000);
+
+        setInterval(renderOnline, 5000);
         nameField.oninput = updateUI;
         document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
         document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
