@@ -10,23 +10,31 @@
     <style>
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
-        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; }
         
-        /* Panel Lateral de Operadores */
+        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; }
+
+        /* VOLUMEN ESTILIZADO */
+        #volControl { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; border: 1px solid rgba(0, 242, 255, 0.3); }
+        #volControl::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--led-cyan); border-radius: 2px; cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); }
+
+        /* CONTENEDOR FIJO PARA EVITAR SALTOS */
+        .timer-slot { height: 45px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 25px; border: 1px dashed rgba(0, 242, 255, 0.3); transition: opacity 0.3s ease; }
+        .hidden-timer { opacity: 0; pointer-events: none; }
+        .visible-timer { opacity: 1; }
+
+        /* RESTO DE ESTILOS */
         .online-sidebar { position: absolute; left: 20px; top: 20px; width: 120px; background: rgba(0, 0, 0, 0.4); border-left: 2px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 5px; z-index: 5; }
-        @media (max-width: 850px) { .online-sidebar { position: relative; left: 0; top: 0; width: 100%; border-left: 0; border-bottom: 1px solid rgba(0, 242, 255, 0.2); margin-bottom: 10px; display: flex; flex-wrap: wrap; gap: 8px; left: auto; top: auto; } }
         .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
         .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); box-shadow: 0 0 10px var(--led-green); color: var(--led-green); }
-        .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 10px var(--led-yellow); color: var(--led-yellow); }
-        .btn-hard { border-color: var(--led-red); box-shadow: 0 0 10px var(--led-red); color: var(--led-red); }
-        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1.2rem; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 15px; border: 1px dashed rgba(0, 242, 255, 0.3); display: none; justify-content: center; align-items: center; gap: 10px; }
+        .btn-easy { border-color: var(--led-green); color: var(--led-green); }
+        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
+        .btn-hard { border-color: var(--led-red); color: var(--led-red); }
+        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1rem; }
         .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.7rem; padding: 0.8rem; height: 140px; overflow-y: auto; color: var(--led-cyan); }
     </style>
 </head>
@@ -41,22 +49,35 @@
             <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
             <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
         </div>
-        <div class="px-6 mb-5">
-            <div class="flex justify-between text-[8px] text-cyan-400 mb-1 font-bold uppercase"><span>Master Volume</span><span id="volLabel">50%</span></div>
-            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.5" class="w-full">
+
+        <div class="px-6">
+            <div class="flex justify-between text-[8px] text-cyan-400 mb-2 font-bold uppercase">
+                <span>Master Volume</span><span id="volLabel">20%</span>
+            </div>
+            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.2" class="w-full">
         </div>
+
         <div>
             <div class="flex justify-between px-1">
                 <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
                 <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
                 <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
             </div>
-            <div class="px-2"><button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button></div>
+            <div class="px-2">
+                <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
+            </div>
+            
+            <div class="timer-slot">
+                <div id="timer-display" class="hidden-timer">
+                    <span id="timer-count">30</span>s
+                </div>
+            </div>
         </div>
-        <div class="flex justify-center h-10"><div id="timer-display"><span id="timer-count">30</span>s</div></div>
+
         <div id="log" class="log-container">> System Online...</div>
+
         <div class="flex flex-col items-center pb-1">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="w-20 opacity-90 mb-1">
+            <img src="KitsuLogo2.png" alt="Kitsu" class="w-16 opacity-90 mb-1">
             <div class="text-[8px] text-cyan-400 font-bold tracking-[0.2em] uppercase">KitsuDevWorks</div>
         </div>
     </div>
@@ -72,6 +93,9 @@
         const nameField = document.getElementById('userName');
         const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
         let onlineUsers = {}, isTimerActive = false, hasConfirmedWay = false, countdown;
+
+        // Inicializar volumen bajo
+        Object.values(sounds).forEach(s => s.volume = 0.2);
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
         const channel = pusher.subscribe('dungeon-channel');
@@ -110,10 +134,19 @@
 
         function startTimer() {
             clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
-            let s = 30; const div = document.getElementById('timer-display'); div.style.display = 'flex';
+            let s = 30; 
+            const timerEl = document.getElementById('timer-display');
+            timerEl.classList.remove('hidden-timer');
+            timerEl.classList.add('visible-timer');
+
             countdown = setInterval(() => {
                 s--; document.getElementById('timer-count').innerText = s;
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; div.style.display = 'none'; updateUI(); }
+                if (s <= 0) { 
+                    clearInterval(countdown); 
+                    isTimerActive = false; 
+                    timerEl.classList.replace('visible-timer', 'hidden-timer'); 
+                    updateUI(); 
+                }
             }, 1000);
         }
 
@@ -123,7 +156,8 @@
             log.innerHTML = `<div style="color:${colors[type]}">> ${name.toUpperCase()}: ${type}</div>` + log.innerHTML;
         }
 
-        setInterval(() => sendSignal('PULSE'), 10000); setInterval(renderOnline, 5000);
+        setInterval(() => sendSignal('PULSE'), 10000); 
+        setInterval(renderOnline, 5000);
         nameField.oninput = updateUI;
         document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
         document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
