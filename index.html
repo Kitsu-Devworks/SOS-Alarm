@@ -34,7 +34,6 @@
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
-        /* AJUSTE CARD PRINCIPAL: Reducido padding para ganar espacio */
         .main-card { width: 450px; height: 95vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1rem; box-sizing: border-box; overflow: hidden; }
 
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
@@ -47,21 +46,11 @@
 
         .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
 
-        /* AJUSTE TIMER: Más compacto para ahorrar espacio vertical */
-        .timer-block { 
-            height: 50px; 
-            width: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 2px 0;
-            flex-shrink: 0;
-        }
+        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 2px 0; flex-shrink: 0; }
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); }
         .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* AJUSTE LOG: Ahora se expande para ocupar todo el espacio disponible */
         .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; }
     </style>
 </head>
@@ -103,8 +92,7 @@
             </div>
 
             <div id="log" class="log-container">> System Online...</div>
-
-            </div>
+        </div>
 
         <div class="online-sidebar">
             <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Online (<span id="userCount">0</span>)</div>
@@ -209,14 +197,10 @@
             clearInterval(countdown);
             isTimerActive = true; hasConfirmedWay = false; updateUI();
             let s = 30;
-            
-            // Mostrar timer suavemente
             timerDisplay.classList.remove('opacity-0');
             timerDisplay.classList.add('opacity-100');
-            
             timerCount.innerText = s;
             timerDisplay.classList.remove('timer-warning');
-            
             countdown = setInterval(() => {
                 s--;
                 timerCount.innerText = s;
@@ -224,7 +208,6 @@
                 if (s <= 0) {
                     clearInterval(countdown);
                     isTimerActive = false;
-                    // Ocultar timer suavemente
                     timerDisplay.classList.remove('opacity-100');
                     timerDisplay.classList.add('opacity-0');
                     updateUI();
@@ -234,7 +217,9 @@
 
         function addLog(msg, color) {
             const log = document.getElementById('log');
-            log.innerHTML = `<div style="color:${color}">> ${msg}</div>` + log.innerHTML;
+            const now = new Date();
+            const timeStr = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}]`;
+            log.innerHTML = `<div style="color:${color}">> ${timeStr} ${msg}</div>` + log.innerHTML;
         }
 
         volControl.addEventListener('input', (e) => {
