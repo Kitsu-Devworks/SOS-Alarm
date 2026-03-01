@@ -98,11 +98,6 @@
         </div>
     </div>
 
-    <audio id="sndEASY" src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3" preload="auto"></audio>
-    <audio id="sndMEDIUM" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-    <audio id="sndHARD" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
-    <audio id="sndWAY" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
-
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
         const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
@@ -113,9 +108,23 @@
         const timerDisplay = document.getElementById('timer-display');
         const timerCount = document.getElementById('timer-count');
         const volControl = document.getElementById('volControl');
-        const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
+        
+        const soundUrls = { 
+            EASY: "https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3", 
+            MEDIUM: "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3", 
+            HARD: "https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3", 
+            WAY: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" 
+        };
         
         let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
+
+        function playAlert(type) {
+            const url = soundUrls[type];
+            if (!url) return;
+            const audio = new Audio(url);
+            audio.volume = parseFloat(volControl.value);
+            audio.play().catch(e => console.log("Interacción requerida"));
+        }
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
@@ -154,14 +163,8 @@
             renderOnline();
             if (type === 'PULSE') return;
             
-            const s = sounds[type];
+            playAlert(type);
             const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
-            
-            if (s) { 
-                s.volume = volControl.value; // SINCRONIZACIÓN FORZADA AQUÍ
-                s.currentTime = 0; 
-                s.play().catch(()=>{}); 
-            }
 
             if (type !== 'WAY') {
                 startTimer();
@@ -206,9 +209,7 @@
         }
 
         volControl.oninput = (e) => {
-            const v = e.target.value;
-            Object.values(sounds).forEach(s => s.volume = v);
-            document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
+            document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%";
         };
 
         setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
