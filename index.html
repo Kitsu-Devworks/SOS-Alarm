@@ -9,91 +9,52 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
+        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        body { 
-            font-family: 'Orbitron', sans-serif; 
-            background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); 
-            height: 100vh; margin: 0; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center; 
-            position: relative;
-        }
-
-        /* CAPA ESTÉTICA: LOGO FIJO */
         .fixed-logo { position: fixed; bottom: 10px; right: 5px; width: 110px; height: auto; opacity: 0.6; z-index: 100; filter: drop-shadow(0 0 5px var(--led-cyan)); pointer-events: none; }
 
-        /* CONTENEDOR PRINCIPAL */
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
 
-        /* CAPA ESTÉTICA: VOLUMEN VERTICAL */
-        .vol-sidebar { position: absolute; left: -80px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 70px; pointer-events: all; z-index: 20; }
-        .vol-label { width: 70px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 12px; }
+        .vol-sidebar { position: absolute; left: -90px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
+        .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
         
-        .vol-track-container { position: relative; width: 10px; height: 200px; }
-        input[type=range].vertical { 
-            appearance: none; -webkit-appearance: none; width: 10px; height: 200px; 
+        .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
+        
+        input[type=range].compat-slider { 
+            -webkit-appearance: none; width: 200px; height: 6px; 
             background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); 
-            border-radius: 5px; outline: none; -webkit-appearance: slider-vertical; overflow: hidden;
+            border-radius: 10px; outline: none; cursor: pointer;
         }
-        input[type=range].vertical::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 16px; height: 16px; background: var(--led-cyan); 
-            border: 2px solid #fff; border-radius: 2px;
-            box-shadow: 0 0 15px var(--led-cyan), -200px 0 0 200px var(--led-cyan); cursor: pointer;
+        input[type=range].compat-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); 
+            border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan);
         }
 
-        /* CAPA ESTÉTICA: ONLINE SIDEBAR */
-        .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); z-index: 20; }
+        .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
-        /* MAIN CARD MODERNA */
         .main-card { 
-            width: 450px; height: 92vh; max-height: 800px; 
-            background: rgba(0, 0, 0, 0.75); backdrop-filter: blur(25px); 
+            width: 450px; height: 90vh; max-height: 780px; 
+            background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); 
             border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; 
-            display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; 
-            overflow: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.8);
+            display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; overflow: hidden;
         }
 
-        /* SISTEMA DE ESTADOS (Tu Lógica) */
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
 
-        /* ESTILO BOTONES RAID (Modernos) */
-        .btn-raid { 
-            width: 90px; height: 90px; border-radius: 50%; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            border: 3px solid transparent; position: relative;
-        }
-        .btn-raid:active { transform: scale(0.95); }
+        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
         .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
-        /* ESTILO BOTÓN WAY (Moderno) */
-        .btn-way { 
-            width: 100%; padding: 16px; border-radius: 15px; 
-            border: 2px solid var(--led-cyan); color: var(--led-cyan); 
-            background: rgba(0, 242, 255, 0.1); font-weight: 900; 
-            text-transform: uppercase; font-size: 11px; letter-spacing: 2px; 
-            margin-top: 10px; box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
-        }
+        .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
 
-        /* TIMER (Tu Texto, Nuevo Estilo) */
-        .timer-block { height: 60px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; flex-shrink: 0; }
-        #timer-display { 
-            font-family: 'JetBrains Mono', monospace; font-weight: 700;
-            font-size: 1.8rem; color: var(--led-cyan); 
-            display: none; justify-content: center; align-items: center; gap: 10px;
-            text-shadow: 0 0 15px var(--led-cyan);
-        }
-        .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; text-shadow: 0 0 15px var(--led-red) !important; }
+        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
+        .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        /* LOG (Modernizado) */
-        .log-container { 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 1.2rem; font-family: 'JetBrains Mono', monospace; 
-            font-size: 0.75rem; padding: 1rem; flex-grow: 1; 
-            overflow-y: auto; color: var(--led-cyan); width: 100%; box-sizing: border-box; margin-bottom: 5px;
-        }
+        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -103,46 +64,34 @@
     <div class="app-container">
         <div class="vol-sidebar">
             <span id="volLabel" class="vol-label">50%</span>
-            <div class="vol-track-container">
-                <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
+            <div class="slider-wrapper">
+                <input type="range" id="volControl" class="compat-slider" min="0" max="1" step="0.01" value="0.5">
             </div>
         </div>
 
         <div class="main-card">
             <div class="text-center">
-                <h1 class="text-xl font-black italic text-cyan-400 mb-2 tracking-tight">DUNGEON RAID CONTROL</h1>
-                <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-4 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
+                <h1 class="text-xl font-black italic text-cyan-400 mb-2">DUNGEON RAID CONTROL</h1>
+                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-4 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
             <div class="flex justify-between px-1 mb-4">
-                <button id="easyBtn" class="btn-raid btn-easy">
-                    <span class="text-3xl">🛡️</span>
-                    <span class="text-[8px] font-black uppercase mt-1">Easy</span>
-                </button>
-                <button id="medBtn" class="btn-raid btn-medium">
-                    <span class="text-3xl">⚔️</span>
-                    <span class="text-[8px] font-black uppercase mt-1">Medium</span>
-                </button>
-                <button id="hardBtn" class="btn-raid btn-hard">
-                    <span class="text-3xl">💀</span>
-                    <span class="text-[8px] font-black uppercase mt-1">Hard</span>
-                </button>
+                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
             </div>
 
             <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
 
             <div class="timer-block">
-                <div id="timer-display">
-                    <span class="text-[10px] uppercase opacity-50 font-mono">Wait:</span>
-                    <span id="timer-count">30</span>s
-                </div>
+                <div id="timer-display"><span id="timer-count">30</span>s</div>
             </div>
 
             <div id="log" class="log-container">> System Online...</div>
 
-            <div class="flex flex-col items-center pt-2 shrink-0">
+            <div class="flex flex-col items-center pt-2">
                 <div class="text-[9px] text-cyan-400 font-bold uppercase tracking-widest">Kitsu DevWorks</div>
-                <div class="text-[7px] text-slate-500 font-bold uppercase opacity-40 italic">Premium Infrastructure • v6.5</div>
+                <div class="text-[7px] text-slate-500 font-bold uppercase opacity-40">Premium Infrastructure • v6.5</div>
             </div>
         </div>
 
@@ -151,11 +100,6 @@
             <div id="userList"></div>
         </div>
     </div>
-
-    <audio id="sndEASY" src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3" preload="auto"></audio>
-    <audio id="sndMEDIUM" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-    <audio id="sndHARD" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
-    <audio id="sndWAY" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
 
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
@@ -167,42 +111,46 @@
         const timerDisplay = document.getElementById('timer-display');
         const timerCount = document.getElementById('timer-count');
         const volControl = document.getElementById('volControl');
-        const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
         
-        let countdown;
-        let isTimerActive = false;
-        let hasConfirmedWay = false;
-        let onlineUsers = {};
+        const soundUrls = { 
+            EASY: "https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3", 
+            MEDIUM: "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3", 
+            HARD: "https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3", 
+            WAY: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" 
+        };
+        
+        let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
+
+        function playAlert(type) {
+            const url = soundUrls[type];
+            if (!url) return;
+            const audio = new Audio(url);
+            audio.volume = parseFloat(volControl.value);
+            audio.play().catch(e => console.log("Audio play blocked"));
+        }
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
-            
             if (!hasName) {
                 diffButtons.forEach(b => b.classList.remove('enabled'));
                 wayBtn.classList.remove('enabled');
                 return;
             }
-
             if (isTimerActive) {
                 diffButtons.forEach(b => b.classList.remove('enabled'));
-                if (!hasConfirmedWay) {
-                    wayBtn.classList.add('enabled');
-                } else {
-                    wayBtn.classList.remove('enabled');
-                }
+                (!hasConfirmedWay) ? wayBtn.classList.add('enabled') : wayBtn.classList.remove('enabled');
             } else {
                 diffButtons.forEach(b => b.classList.add('enabled'));
                 wayBtn.classList.remove('enabled');
             }
         }
 
-        // --- SISTEMA ONLINE (Re-integrado) ---
         function renderOnline() {
             const now = Date.now();
             let html = '', count = 0;
             for (let u in onlineUsers) {
-                // Si hace más de 20s que no recibimos pulso, lo borramos
-                if (now - onlineUsers[u] > 20000) { delete onlineUsers[u]; continue; }
+                // Aumentado a 40 segundos para mayor estabilidad en PC
+                if (now - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
                 html += `<div class="flex items-center gap-2 text-[9px] text-cyan-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_5px_#00ff88]"></div>${u.toUpperCase()}</div>`;
                 count++;
             }
@@ -210,19 +158,42 @@
             document.getElementById('userCount').innerText = count;
         }
 
-        nameField.addEventListener('input', updateUI);
+        const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
+        const channel = pusher.subscribe('dungeon-channel');
+
+        channel.bind('client-sos', (data) => {
+            const [name, type] = data.user.split('|');
+            onlineUsers[name.toUpperCase()] = Date.now(); 
+            renderOnline();
+            if (type === 'PULSE') return;
+            
+            playAlert(type);
+            const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
+
+            if (type !== 'WAY') {
+                startTimer();
+                addLog(`¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
+            } else {
+                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
+            }
+        });
+
+        async function sendSignal(type) {
+            const user = nameField.value.trim();
+            if (!user || user.length < 2) return;
+            if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
+            try {
+                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) });
+            } catch (e) {}
+        }
 
         function startTimer() {
             clearInterval(countdown);
-            isTimerActive = true;
-            hasConfirmedWay = false;
-            updateUI();
-            
+            isTimerActive = true; hasConfirmedWay = false; updateUI();
             let s = 30;
-            timerDisplay.style.display = 'flex';
+            timerDisplay.style.display = 'block';
             timerCount.innerText = s;
             timerDisplay.classList.remove('timer-warning');
-
             countdown = setInterval(() => {
                 s--;
                 timerCount.innerText = s;
@@ -236,82 +207,25 @@
             }, 1000);
         }
 
-        const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
-        const channel = pusher.subscribe('dungeon-channel');
-
-        channel.bind('client-sos', (data) => {
-            const [name, type] = data.user.split('|');
-            
-            // Registrar usuario online (cualquier señal cuenta como actividad)
-            onlineUsers[name.toUpperCase()] = Date.now(); 
-            renderOnline();
-
-            // Si es solo un pulso de online, no hacemos nada más
-            if (type === 'PULSE') return;
-
-            const s = sounds[type];
-            const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
-            
-            if (s) { 
-                s.currentTime = 0; 
-                // Asegurar volumen actual antes de play
-                s.volume = volControl.value;
-                s.play().catch(()=>{}); 
-            }
-            
-            if (type !== 'WAY') {
-                startTimer();
-                addLog(`¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
-            } else {
-                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
-            }
-        });
-
-        async function sendSignal(type) {
-            const user = nameField.value.trim();
-            if (!user || user.length < 2) return;
-            
-            if (type === 'WAY') {
-                hasConfirmedWay = true;
-                updateUI();
-            }
-            
-            try {
-                // Usamos el worker original
-                await fetch(CLOUDFLARE_URL, { 
-                    method: 'POST', 
-                    mode: 'no-cors', 
-                    body: JSON.stringify({ user: `${user}|${type}` }) 
-                });
-            } catch (e) {}
-        }
-
-        // --- SISTEMA ONLINE: PULSO (Re-integrado) ---
-        // Enviar pulso de "estoy online" cada 10s si hay nick puesto
-        setInterval(() => {
-            if (nameField.value.trim().length >= 2) {
-                sendSignal('PULSE');
-            }
-        }, 10000);
-
-        // Limpieza de lista online cada 5s
-        setInterval(renderOnline, 5000);
-
-        document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
-        document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
-        document.getElementById('hardBtn').onclick = () => sendSignal('HARD');
-        document.getElementById('wayBtn').onclick = () => sendSignal('WAY');
-
         function addLog(msg, color) {
             const log = document.getElementById('log');
             log.innerHTML = `<div style="color:${color}">> ${msg}</div>` + log.innerHTML;
         }
 
-        document.getElementById('volControl').oninput = (e) => {
-            const v = e.target.value;
-            Object.values(sounds).forEach(s => s.volume = v);
-            document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
-        };
+        volControl.addEventListener('input', (e) => {
+            document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%";
+        });
+
+        // Pulso cada 10 segundos
+        setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
+        // Renderizar lista cada 5 segundos
+        setInterval(renderOnline, 5000);
+        
+        nameField.addEventListener('input', updateUI);
+        document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
+        document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
+        document.getElementById('hardBtn').onclick = () => sendSignal('HARD');
+        document.getElementById('wayBtn').onclick = () => sendSignal('WAY');
     </script>
 </body>
 </html>
