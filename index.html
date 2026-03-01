@@ -13,11 +13,42 @@
         
         .app-container { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 800px; }
 
-        /* VOLUMEN VERTICAL FIJO */
-        .vol-sidebar { position: absolute; left: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; width: 50px; }
-        input[type=range].vertical { appearance: slider-vertical; width: 8px; height: 180px; background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.3); cursor: pointer; }
+        /* --- NUEVO DISEÑO DE VOLUMEN --- */
+        .vol-sidebar { position: absolute; left: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 60px; }
+        
+        /* Icono de volumen estilizado */
+        .vol-icon { 
+            width: 24px; height: 24px; 
+            background: var(--led-cyan); 
+            clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%);
+            filter: drop-shadow(0 0 5px var(--led-cyan));
+            opacity: 0.8;
+        }
 
-        /* VIÑETA OPERADORES FIJA */
+        /* Barra de volumen tipo "Energy Cell" */
+        input[type=range].vertical { 
+            appearance: slider-vertical; 
+            width: 12px; height: 200px; 
+            background: rgba(0, 242, 255, 0.05); 
+            border: 1px solid rgba(0, 242, 255, 0.2); 
+            border-radius: 2px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* El "tirador" (thumb) estilizado */
+        input[type=range].vertical::-webkit-slider-thumb { 
+            -webkit-appearance: none; 
+            width: 22px; height: 10px; 
+            background: var(--led-cyan); 
+            border-radius: 2px;
+            box-shadow: 0 0 15px var(--led-cyan), inset 0 0 5px white;
+            border: none;
+        }
+        
+        #volLabel { font-family: 'JetBrains Mono'; text-shadow: 0 0 8px var(--led-cyan); }
+
+        /* --- RESTO DEL BOX (Mantenido según tus specs) --- */
         .online-sidebar { position: absolute; right: 0; width: 130px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; }
         .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; margin-bottom: 4px; }
         .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); }
@@ -30,8 +61,7 @@
             padding: 1.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); 
         }
 
-        /* SEPARACIÓN DE 0.5cm (aprox 19px) */
-        .header-section { margin-bottom: 19px; }
+        .header-section { margin-bottom: 19px; } /* 0.5cm exactos */
 
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
@@ -51,9 +81,9 @@
 
     <div class="app-container">
         <div class="vol-sidebar">
-            <span class="text-[12px]">🔊</span>
+            <div class="vol-icon"></div>
             <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
-            <span id="volLabel" class="text-cyan-400 font-bold text-[10px]">50%</span>
+            <span id="volLabel" class="text-cyan-400 font-bold text-[11px]">50%</span>
         </div>
 
         <div class="main-card">
@@ -93,10 +123,14 @@
         const nameField = document.getElementById('userName');
         const diffButtons = document.querySelectorAll('.btn-raid');
         const wayBtn = document.getElementById('wayBtn');
-        const sounds = { EASY: new Audio('https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3'), MEDIUM: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'), HARD: new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'), WAY: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3') };
+        const sounds = { 
+            EASY: new Audio('https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3'), 
+            MEDIUM: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'), 
+            HARD: new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'), 
+            WAY: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3') 
+        };
         
-        let countdown, isTimerActive = false, hasConfirmedWay = false;
-        let onlineUsers = {};
+        let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
@@ -111,8 +145,7 @@
 
         function renderOnline() {
             const now = Date.now();
-            let html = '';
-            let count = 0;
+            let html = '', count = 0;
             for (let u in onlineUsers) {
                 if (now - onlineUsers[u] > 20000) { delete onlineUsers[u]; continue; }
                 html += `<div class="user-tag"><div class="status-dot"></div>${u}</div>`;
@@ -129,27 +162,18 @@
             const [name, type] = data.user.split('|');
             onlineUsers[name.toUpperCase()] = Date.now();
             renderOnline();
-            
             if (type === 'PULSE') return;
-
             const s = sounds[type];
             if (s) { s.currentTime = 0; s.play().catch(()=>{}); }
-            
-            if (type !== 'WAY') {
-                startTimer();
-                addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type);
-            } else {
-                addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY');
-            }
+            if (type !== 'WAY') { startTimer(); addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type); }
+            else { addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY'); }
         });
 
         async function sendSignal(type) {
             const user = nameField.value.trim();
             if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
-            try {
-                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) });
-            } catch (e) {}
+            try { await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) }); } catch (e) {}
         }
 
         function startTimer() {
@@ -173,7 +197,6 @@
             document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
         };
 
-        // Enviar pulso cada 10s para el contador de gente
         setInterval(() => {
             const user = nameField.value.trim();
             if (user.length >= 2) sendSignal('PULSE');
