@@ -22,19 +22,16 @@
 
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
 
-        /* VOLUMEN ORIGINAL */
         .vol-sidebar { position: absolute; left: -90px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
         .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
         .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
         input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan); }
 
-        /* SELECTOR DE JUEGO */
         .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; margin-bottom: 15px; width: 100%; }
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; letter-spacing: 1px; }
         .game-opt.active { background: var(--led-cyan); color: #000; box-shadow: 0 0 10px var(--led-cyan); }
 
-        /* ONLINE ORIGINAL */
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
         .main-card { width: 450px; height: 90vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; overflow: hidden; }
@@ -49,8 +46,17 @@
 
         .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
 
-        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
+        /* AJUSTE PARA QUE EL LOG NO SE MUEVA */
+        .timer-block { 
+            height: 65px; 
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 5px 0;
+            flex-shrink: 0;
+        }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); }
         .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
@@ -89,7 +95,9 @@
             <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
 
             <div class="timer-block">
-                <div id="timer-display"><span id="timer-count">30</span>s</div>
+                <div id="timer-display" class="opacity-0 transition-opacity duration-300">
+                    <span id="timer-count">30</span>s
+                </div>
             </div>
 
             <div id="log" class="log-container">> System Online...</div>
@@ -138,7 +146,7 @@
             if (!url) return;
             const audio = new Audio(url);
             audio.volume = parseFloat(volControl.value);
-            audio.play().catch(e => console.log("User interaction needed"));
+            audio.play().catch(e => console.log("Sound play error"));
         }
 
         function updateUI() {
@@ -203,14 +211,26 @@
             clearInterval(countdown);
             isTimerActive = true; hasConfirmedWay = false; updateUI();
             let s = 30;
-            timerDisplay.style.display = 'block';
+            
+            // Mostrar timer suavemente
+            timerDisplay.classList.remove('opacity-0');
+            timerDisplay.classList.add('opacity-100');
+            
             timerCount.innerText = s;
             timerDisplay.classList.remove('timer-warning');
+            
             countdown = setInterval(() => {
                 s--;
                 timerCount.innerText = s;
                 if (s <= 10) timerDisplay.classList.add('timer-warning');
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; timerDisplay.style.display = 'none'; updateUI(); }
+                if (s <= 0) {
+                    clearInterval(countdown);
+                    isTimerActive = false;
+                    // Ocultar timer suavemente
+                    timerDisplay.classList.remove('opacity-100');
+                    timerDisplay.classList.add('opacity-0');
+                    updateUI();
+                }
             }, 1000);
         }
 
