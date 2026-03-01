@@ -11,25 +11,43 @@
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        .fixed-logo { position: fixed; bottom: 5px; right: 5px; width: 110px; height: auto; opacity: 0.6; z-index: 100; filter: drop-shadow(0 0 5px var(--led-cyan)); pointer-events: none; }
+        /* LOGO BAJADO 1CM (aprox 38px adicionales) */
+        .fixed-logo { position: fixed; bottom: 10px; right: 5px; width: 110px; height: auto; opacity: 0.6; z-index: 100; filter: drop-shadow(0 0 5px var(--led-cyan)); pointer-events: none; }
 
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
 
-        /* VOLUMEN PRO Y FIJO */
-        .vol-sidebar { position: absolute; left: -75px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 60px; pointer-events: all; }
-        .vol-label { width: 60px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 10px; }
+        /* VOLUMEN GAMER PRO Y FIJO */
+        .vol-sidebar { position: absolute; left: -80px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 70px; pointer-events: all; }
+        .vol-label { width: 70px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan)); margin-bottom: 12px; }
         
+        /* Contenedor para el estilo de barra llena */
+        .vol-track-container { position: relative; width: 10px; height: 200px; }
+
         input[type=range].vertical { 
-            appearance: none; -webkit-appearance: none; width: 8px; height: 200px; 
-            background: linear-gradient(to bottom, rgba(0, 242, 255, 0.2), rgba(0, 0, 0, 0.5));
-            border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 10px; outline: none;
+            appearance: none; -webkit-appearance: none; 
+            width: 10px; height: 200px; 
+            background: rgba(0, 0, 0, 0.6); 
+            border: 1px solid rgba(0, 242, 255, 0.4); 
+            border-radius: 5px; outline: none;
             -webkit-appearance: slider-vertical;
+            overflow: hidden; /* Necesario para el efecto de llenado en Chrome */
         }
+
+        /* Estilo del tirador (thumb) */
         input[type=range].vertical::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 18px; height: 18px; 
-            background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; 
-            transform: rotate(45deg); box-shadow: 0 0 15px var(--led-cyan); cursor: pointer;
+            -webkit-appearance: none; 
+            width: 16px; height: 16px; 
+            background: var(--led-cyan); 
+            border: 2px solid #fff; 
+            border-radius: 2px; /* Cuadrado pro */
+            box-shadow: 0 0 15px var(--led-cyan), -200px 0 0 200px var(--led-cyan); /* Efecto de llenado neón */
+            cursor: pointer;
         }
+
+        /* Soporte Firefox (llenado nativo) */
+        input[type=range].vertical::-moz-range-progress { background-color: var(--led-cyan); border-radius: 5px; }
+        input[type=range].vertical::-moz-range-track { background-color: rgba(0, 0, 0, 0.6); border-radius: 5px; }
+        input[type=range].vertical::-moz-range-thumb { width: 16px; height: 16px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 2px; box-shadow: 0 0 15px var(--led-cyan); cursor: pointer; }
 
         /* ONLINE */
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
@@ -51,7 +69,7 @@
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
         .timer-block { height: 60px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; flex-shrink: 0; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan)); }
         .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
@@ -70,7 +88,9 @@
     <div class="app-container">
         <div class="vol-sidebar">
             <span id="volLabel" class="vol-label">50%</span>
-            <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
+            <div class="vol-track-container">
+                <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
+            </div>
         </div>
 
         <div class="main-card">
@@ -191,9 +211,20 @@
             log.innerHTML = `<div style="color:${colors[type]}">> ${msg}</div>` + log.innerHTML;
         }
 
+        // --- SOLUCIÓN TÉCNICA VOLUMEN ---
         document.getElementById('volControl').oninput = (e) => {
             const v = e.target.value;
+            // Actualizamos el volumen internamente
             Object.values(sounds).forEach(s => s.volume = v);
+            
+            // Forzamos un micropulso de sonido inaudible para despertar el control del navegador
+            // Esto asegura que el cambio de volumen se aplique de verdad en alarmas paradas
+            Object.values(sounds).forEach(s => {
+                if (s.paused) {
+                    s.play().then(() => s.pause()).catch(() => {});
+                }
+            });
+
             document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
         };
 
