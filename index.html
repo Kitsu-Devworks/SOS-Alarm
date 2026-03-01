@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Raid | Kitsu DevWorks</title>
+    <title>Dungeon Control | Kitsu DevWorks</title>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -11,70 +11,52 @@
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
         
-        .app-container { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 800px; }
+        .app-container { position: relative; display: flex; align-items: center; justify-content: center; width: 100%; max-width: 850px; }
 
-        /* --- NUEVO DISEÑO DE VOLUMEN --- */
-        .vol-sidebar { position: absolute; left: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; width: 60px; }
-        
-        /* Icono de volumen estilizado */
-        .vol-icon { 
-            width: 24px; height: 24px; 
-            background: var(--led-cyan); 
-            clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%);
-            filter: drop-shadow(0 0 5px var(--led-cyan));
-            opacity: 0.8;
+        /* VOLUMEN A 1CM (38px aprox) */
+        .vol-sidebar { position: absolute; left: -50px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+        .vol-icon { width: 20px; height: 20px; background: var(--led-cyan); clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%); filter: drop-shadow(0 0 5px var(--led-cyan)); }
+        input[type=range].vertical { appearance: slider-vertical; width: 10px; height: 180px; background: rgba(0, 242, 255, 0.1); border: 1px solid rgba(0, 242, 255, 0.2); cursor: pointer; }
+
+        /* VIÑETA SUPERIOR DERECHA */
+        .online-sidebar { position: absolute; right: -130px; top: 0; width: 125px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); }
+
+        /* TÍTULO CON DEGRADADO PROFESIONAL */
+        .pro-title { 
+            font-size: 1.5rem; font-weight: 900; text-transform: uppercase; letter-spacing: -1px;
+            background: linear-gradient(to bottom, #fff 20%, var(--led-cyan) 60%, #0088ff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.4));
         }
-
-        /* Barra de volumen tipo "Energy Cell" */
-        input[type=range].vertical { 
-            appearance: slider-vertical; 
-            width: 12px; height: 200px; 
-            background: rgba(0, 242, 255, 0.05); 
-            border: 1px solid rgba(0, 242, 255, 0.2); 
-            border-radius: 2px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* El "tirador" (thumb) estilizado */
-        input[type=range].vertical::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            width: 22px; height: 10px; 
-            background: var(--led-cyan); 
-            border-radius: 2px;
-            box-shadow: 0 0 15px var(--led-cyan), inset 0 0 5px white;
-            border: none;
-        }
-        
-        #volLabel { font-family: 'JetBrains Mono'; text-shadow: 0 0 8px var(--led-cyan); }
-
-        /* --- RESTO DEL BOX (Mantenido según tus specs) --- */
-        .online-sidebar { position: absolute; right: 0; width: 130px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; }
-        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; margin-bottom: 4px; }
-        .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); }
 
         .main-card { 
             width: 450px; height: 95vh; max-height: 850px; 
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
-            border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; 
+            background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2.5rem; 
             display: flex; flex-direction: column; justify-content: space-between; 
-            padding: 1.5rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+            padding: 1.8rem; box-shadow: 0 0 40px rgba(0,0,0,0.7); 
         }
 
-        .header-section { margin-bottom: 19px; } /* 0.5cm exactos */
+        /* TIMER EFECTO PRO */
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.5rem; color: var(--led-cyan); display: none; transition: all 0.3s; }
+        .timer-critical { 
+            color: var(--led-red) !important; 
+            animation: pulse-red 0.5s infinite alternate;
+            text-shadow: 0 0 20px var(--led-red);
+        }
+        @keyframes pulse-red { from { transform: scale(1); opacity: 1; } to { transform: scale(1.1); opacity: 0.7; } }
 
-        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
+        /* RESTO DE ELEMENTOS */
+        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
-        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); box-shadow: 0 0 10px var(--led-green); color: var(--led-green); }
-        .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 10px var(--led-yellow); color: var(--led-yellow); }
-        .btn-hard { border-color: var(--led-red); box-shadow: 0 0 10px var(--led-red); color: var(--led-red); }
-        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1rem; }
-
-        .timer-slot { height: 40px; display: flex; align-items: center; justify-content: center; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); display: none; }
-
-        .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 0.8rem; height: 200px; overflow-y: auto; color: var(--led-cyan); margin-top: 20px; }
+        .btn-raid { width: 90px; height: 90px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
+        .btn-easy { border-color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); color: var(--led-green); }
+        .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); color: var(--led-yellow); }
+        .btn-hard { border-color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); color: var(--led-red); }
+        
+        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 210px; overflow-y: auto; color: var(--led-cyan); margin-top: 15px; }
+        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 6px; margin-bottom: 5px; }
+        .status-dot { width: 6px; height: 6px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); }
     </style>
 </head>
 <body>
@@ -83,36 +65,38 @@
         <div class="vol-sidebar">
             <div class="vol-icon"></div>
             <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
-            <span id="volLabel" class="text-cyan-400 font-bold text-[11px]">50%</span>
+            <span id="volLabel" class="text-cyan-400 font-bold text-[10px]">50%</span>
         </div>
 
         <div class="main-card">
-            <div class="text-center header-section">
-                <h1 class="text-lg font-black italic text-cyan-400">DUNGEON RAID CONTROL</h1>
-                <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
+            <div class="text-center mb-4">
+                <h1 class="pro-title">Dungeon Control</h1>
+                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-3 font-mono outline-none focus:border-cyan-400 w-2/3 text-center uppercase">
             </div>
 
             <div class="flex justify-between px-1">
-                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
-                <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
-                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
+                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
             </div>
 
-            <div class="px-2"><button id="wayBtn" class="btn-way">🏃‍♂️ CONFIRMAR EN CAMINO</button></div>
-
-            <div class="timer-slot">
-                <div id="timer-display"><span class="text-[10px] opacity-50 uppercase">Wait:</span> <span id="timer-count">30</span>s</div>
+            <div class="px-2">
+                <button id="wayBtn" class="btn-way bg-cyan-500/10 border-2 border-cyan-400 text-cyan-400 w-full py-4 rounded-xl font-black text-[11px] mt-4 uppercase tracking-widest">🏃‍♂️ En Camino</button>
             </div>
 
-            <div id="log" class="log-container">> System Online...</div>
+            <div class="flex justify-center h-16 items-center">
+                <div id="timer-display"><span id="timer-count">30</span>s</div>
+            </div>
 
-            <div class="flex justify-center pb-2">
+            <div id="log" class="log-container">> System Ready...</div>
+
+            <div class="flex justify-center pb-1">
                 <img src="KitsuLogo2.png" alt="Kitsu" class="w-[104px] h-auto opacity-90">
             </div>
         </div>
 
         <div class="online-sidebar">
-            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Operadores (<span id="userCount">0</span>)</div>
+            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Online (<span id="userCount">0</span>)</div>
             <div id="userList"></div>
         </div>
     </div>
@@ -123,6 +107,8 @@
         const nameField = document.getElementById('userName');
         const diffButtons = document.querySelectorAll('.btn-raid');
         const wayBtn = document.getElementById('wayBtn');
+        const timerDisplay = document.getElementById('timer-display');
+        const timerCount = document.getElementById('timer-count');
         const sounds = { 
             EASY: new Audio('https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3'), 
             MEDIUM: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'), 
@@ -163,8 +149,7 @@
             onlineUsers[name.toUpperCase()] = Date.now();
             renderOnline();
             if (type === 'PULSE') return;
-            const s = sounds[type];
-            if (s) { s.currentTime = 0; s.play().catch(()=>{}); }
+            if (sounds[type]) { sounds[type].currentTime = 0; sounds[type].play().catch(()=>{}); }
             if (type !== 'WAY') { startTimer(); addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type); }
             else { addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY'); }
         });
@@ -178,10 +163,12 @@
 
         function startTimer() {
             clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
-            let s = 30; document.getElementById('timer-display').style.display = 'flex';
+            let s = 30; timerDisplay.style.display = 'block';
+            timerDisplay.classList.remove('timer-critical');
             countdown = setInterval(() => {
-                s--; document.getElementById('timer-count').innerText = s;
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; document.getElementById('timer-display').style.display = 'none'; updateUI(); }
+                s--; timerCount.innerText = s;
+                if (s <= 10) timerDisplay.classList.add('timer-critical');
+                if (s <= 0) { clearInterval(countdown); isTimerActive = false; timerDisplay.style.display = 'none'; updateUI(); }
             }, 1000);
         }
 
@@ -197,11 +184,7 @@
             document.getElementById('volLabel').innerText = Math.round(v * 100) + "%";
         };
 
-        setInterval(() => {
-            const user = nameField.value.trim();
-            if (user.length >= 2) sendSignal('PULSE');
-        }, 10000);
-
+        setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
         setInterval(renderOnline, 5000);
         nameField.oninput = updateUI;
         document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
