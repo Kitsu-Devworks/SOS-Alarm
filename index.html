@@ -9,11 +9,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
-        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
+        /* LOGO EN LA ESQUINA INFERIOR DERECHA DE LA PANTALLA */
+        .fixed-logo { 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; 
+            width: 120px; 
+            height: auto; 
+            opacity: 0.8; 
+            z-index: 100;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.2));
+        }
+
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; }
 
-        /* VOLUMEN */
+        /* VOLUMEN GAMER */
         .vol-sidebar { position: absolute; left: -45px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 12px; width: 30px; }
         .vol-icon { width: 18px; height: 18px; background: var(--led-cyan); clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%); filter: drop-shadow(0 0 5px var(--led-cyan)); }
         input[type=range].vertical { appearance: slider-vertical; width: 6px; height: 180px; background: rgba(0, 242, 255, 0.1); border-radius: 10px; cursor: pointer; outline: none; border: 1px solid rgba(0, 242, 255, 0.2); }
@@ -23,10 +35,10 @@
         .online-sidebar { position: absolute; right: -135px; top: 114px; width: 125px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); }
 
         .main-card { 
-            width: 450px; height: 95vh; max-height: 820px; 
+            width: 450px; height: 85vh; max-height: 700px; 
             background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(20px); 
             border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2.5rem; 
-            display: flex; flex-direction: column; padding: 1.8rem; box-shadow: 0 0 50px rgba(0,0,0,0.8); z-index: 10;
+            display: flex; flex-direction: column; padding: 2rem; box-shadow: 0 0 50px rgba(0,0,0,0.8); z-index: 10;
         }
 
         .pro-title { 
@@ -42,27 +54,17 @@
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
-        /* TIMER BLOQUEADO - ESPACIO SAGRADO */
-        .timer-block { 
-            height: 70px; /* Altura fija obligatoria */
-            width: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            margin: 5px 0;
-            flex-shrink: 0; /* Evita que se encoja */
-        }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.3rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
-        .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
-        @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.05); } }
+        /* TIMER BLOQUEADO */
+        .timer-block { height: 70px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 10px 0; flex-shrink: 0; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.5rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
 
-        /* LOG AJUSTADO PARA QUE EL LOGO QUEDE ABAJO */
-        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 125px; min-height: 125px; overflow-y: auto; color: var(--led-cyan); flex-shrink: 0; }
-        
-        .logo-footer { display: flex; justify-content: center; margin-top: auto; padding-bottom: 5px; flex-shrink: 0; }
+        /* LOG RECUADRADO */
+        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 180px; overflow-y: auto; color: var(--led-cyan); flex-grow: 1; }
     </style>
 </head>
 <body>
+
+    <img src="KitsuLogo2.png" alt="Kitsu" class="fixed-logo">
 
     <div class="app-container">
         <div class="vol-sidebar">
@@ -90,10 +92,6 @@
             </div>
 
             <div id="log" class="log-container">> System Ready...</div>
-
-            <div class="logo-footer">
-                <img src="KitsuLogo2.png" alt="Kitsu" class="w-[104px] h-auto opacity-90">
-            </div>
         </div>
 
         <div class="online-sidebar">
@@ -163,10 +161,9 @@
 
         function startTimer() {
             clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
-            let s = 30; timerDisplay.style.display = 'block'; timerDisplay.classList.remove('timer-critical');
+            let s = 30; timerDisplay.style.display = 'block';
             countdown = setInterval(() => {
                 s--; timerCount.innerText = s;
-                if (s <= 10) timerDisplay.classList.add('timer-critical');
                 if (s <= 0) { clearInterval(countdown); isTimerActive = false; timerDisplay.style.display = 'none'; updateUI(); }
             }, 1000);
         }
