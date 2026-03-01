@@ -13,46 +13,45 @@
         
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; }
 
+        /* VOLUMEN */
         .vol-sidebar { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; width: 30px; }
         .vol-icon { width: 18px; height: 18px; background: var(--led-cyan); clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%); filter: drop-shadow(0 0 5px var(--led-cyan)); }
-        input[type=range].vertical { appearance: slider-vertical; width: 8px; height: 180px; cursor: pointer; background: transparent; }
+        input[type=range].vertical { appearance: slider-vertical; width: 8px; height: 160px; cursor: pointer; }
 
+        /* ONLINE 3CM ABAJO */
         .online-sidebar { position: absolute; right: -135px; top: 114px; width: 125px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); }
 
         .main-card { 
-            width: 450px; height: 95vh; max-height: 820px; 
+            width: 450px; height: 90vh; max-height: 750px; 
             background: rgba(0, 0, 0, 0.65); backdrop-filter: blur(20px); 
             border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2.5rem; 
             display: flex; flex-direction: column; 
             padding: 1.5rem; box-shadow: 0 0 40px rgba(0,0,0,0.7); z-index: 10;
-            overflow: hidden;
         }
 
         .pro-title { 
             font-size: 1.6rem; font-weight: 900; text-transform: uppercase;
             background: linear-gradient(to bottom, #fff 20%, var(--led-cyan) 60%, #0088ff 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 8px rgba(0, 242, 255, 0.4));
         }
 
         .header-section { margin-bottom: 19px; }
 
-        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: 0.3s; filter: grayscale(1); }
+        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; opacity: 0.15; pointer-events: none; transition: 0.3s; }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
-        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); color: var(--led-green); }
-        .btn-medium { border-color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); color: var(--led-yellow); }
-        .btn-hard { border-color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); color: var(--led-red); }
+        .btn-easy { border-color: var(--led-green); color: var(--led-green); }
+        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
+        .btn-hard { border-color: var(--led-red); color: var(--led-red); }
 
-        /* AJUSTE PARA QUE NADA SE DESPLACE */
-        .timer-container { height: 60px; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; text-align: center; }
-        .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; text-shadow: 0 0 20px var(--led-red); }
+        .timer-container { height: 50px; display: flex; align-items: center; justify-content: center; margin: 10px 0; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; }
+        .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 180px; min-height: 180px; overflow-y: auto; color: var(--led-cyan); margin-bottom: 15px; }
+        /* LOG A LA MITAD (90px) */
+        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.7rem; padding: 0.8rem; height: 90px !important; overflow-y: auto; color: var(--led-cyan); margin-bottom: 15px; }
         
-        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 6px; margin-bottom: 5px; text-transform: uppercase; }
+        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; text-transform: uppercase; }
         .status-dot { width: 6px; height: 6px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); }
     </style>
 </head>
@@ -71,15 +70,13 @@
                 <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-3 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
-            <div class="flex justify-between px-1 mb-4">
+            <div class="flex justify-between px-1 mb-2">
                 <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
                 <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
                 <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
             </div>
 
-            <div class="px-2">
-                <button id="wayBtn" class="btn-way bg-cyan-500/10 border-2 border-cyan-400 text-cyan-400 w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-widest">🏃‍♂️ En Camino</button>
-            </div>
+            <button id="wayBtn" class="btn-way bg-cyan-500/10 border-2 border-cyan-400 text-cyan-400 w-full py-4 rounded-xl font-black text-[11px] uppercase tracking-widest opacity-15 pointer-events-none">🏃‍♂️ En Camino</button>
 
             <div class="timer-container">
                 <div id="timer-display"><span id="timer-count">30</span>s</div>
@@ -87,7 +84,7 @@
 
             <div id="log" class="log-container">> System Ready...</div>
 
-            <div class="flex justify-center mt-auto pb-2">
+            <div class="flex justify-center mt-auto">
                 <img src="KitsuLogo2.png" alt="Kitsu" class="w-[104px] h-auto opacity-90">
             </div>
         </div>
@@ -170,7 +167,7 @@
         function addLog(msg, type) {
             const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
             const log = document.getElementById('log');
-            log.innerHTML = `<div style="color:${colors[type]}">> ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} - ${msg}</div>` + log.innerHTML;
+            log.innerHTML = `<div style="color:${colors[type]}">> ${msg}</div>` + log.innerHTML;
         }
 
         document.getElementById('volControl').oninput = (e) => {
