@@ -13,13 +13,13 @@
         
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; }
 
-        /* VOLUMEN GAMER */
+        /* VOLUMEN */
         .vol-sidebar { position: absolute; left: -45px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; gap: 12px; width: 30px; }
         .vol-icon { width: 18px; height: 18px; background: var(--led-cyan); clip-path: polygon(0% 30%, 30% 30%, 70% 0%, 70% 100%, 30% 70%, 0% 70%); filter: drop-shadow(0 0 5px var(--led-cyan)); }
         input[type=range].vertical { appearance: slider-vertical; width: 6px; height: 180px; background: rgba(0, 242, 255, 0.1); border-radius: 10px; cursor: pointer; outline: none; border: 1px solid rgba(0, 242, 255, 0.2); }
-        input[type=range].vertical::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: var(--led-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--led-cyan); cursor: pointer; }
+        input[type=range].vertical::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: var(--led-cyan); border-radius: 50%; box-shadow: 0 0 10px var(--led-cyan); }
 
-        /* ONLINE 3CM ABAJO */
+        /* ONLINE */
         .online-sidebar { position: absolute; right: -135px; top: 114px; width: 125px; background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(5px); }
 
         .main-card { 
@@ -42,16 +42,24 @@
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
-        /* TIMER FIJO Y BLOQUEADO (NO FLOTA, NO MUEVE) */
-        .timer-block { height: 65px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 10px 0; border-top: 1px solid rgba(0, 242, 255, 0.05); border-bottom: 1px solid rgba(0, 242, 255, 0.05); }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.5rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
+        /* TIMER BLOQUEADO - ESPACIO SAGRADO */
+        .timer-block { 
+            height: 70px; /* Altura fija obligatoria */
+            width: 100%; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            margin: 5px 0;
+            flex-shrink: 0; /* Evita que se encoja */
+        }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.3rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
         .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
-        @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
+        @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.05); } }
 
-        /* LOG AJUSTADO */
-        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 140px; min-height: 140px; overflow-y: auto; color: var(--led-cyan); }
+        /* LOG AJUSTADO PARA QUE EL LOGO QUEDE ABAJO */
+        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 125px; min-height: 125px; overflow-y: auto; color: var(--led-cyan); flex-shrink: 0; }
         
-        .logo-footer { display: flex; justify-content: center; margin-top: auto; padding-bottom: 5px; }
+        .logo-footer { display: flex; justify-content: center; margin-top: auto; padding-bottom: 5px; flex-shrink: 0; }
     </style>
 </head>
 <body>
