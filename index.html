@@ -11,23 +11,44 @@
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; }
+        /* Contenedor relativo para que la viñeta se pegue a la derecha */
+        .wrapper { position: relative; display: flex; align-items: center; }
+
+        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; position: relative; }
+
+        /* VIÑETA DE OPERADORES A LA DERECHA */
+        .online-sidebar { 
+            position: absolute; 
+            left: 100%; /* Lo pega justo donde termina el card */
+            top: 50px; 
+            width: 130px; 
+            background: rgba(0, 20, 30, 0.8); 
+            border: 1px solid rgba(0, 242, 255, 0.3);
+            border-left: 4px solid var(--led-cyan);
+            padding: 12px; 
+            font-family: 'JetBrains Mono'; 
+            border-radius: 0 15px 15px 0; /* Redondeado solo a la derecha */
+            z-index: 5;
+            box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+        }
+
+        @media (max-width: 850px) { 
+            .online-sidebar { position: absolute; left: auto; right: 10px; top: 10px; width: 100px; border-radius: 10px; font-size: 8px; } 
+        }
 
         /* VOLUMEN ESTILIZADO */
-        #volControl { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; border: 1px solid rgba(0, 242, 255, 0.3); }
+        #volControl { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; border: 1px solid rgba(0, 242, 255, 0.3); margin-top: 5px; }
         #volControl::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--led-cyan); border-radius: 2px; cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); }
 
-        /* CONTENEDOR FIJO PARA EVITAR SALTOS */
-        .timer-slot { height: 45px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 25px; border: 1px dashed rgba(0, 242, 255, 0.3); transition: opacity 0.3s ease; }
-        .hidden-timer { opacity: 0; pointer-events: none; }
-        .visible-timer { opacity: 1; }
+        /* ESPACIADOS SOLICITADOS (0.5cm aprox 19px) */
+        .title-section { margin-bottom: 20px; } /* Separa titulo de Master Volume */
+        .vol-section { margin-bottom: 20px; } /* Separa volumen de botones */
 
-        /* RESTO DE ESTILOS */
-        .online-sidebar { position: absolute; left: 20px; top: 20px; width: 120px; background: rgba(0, 0, 0, 0.4); border-left: 2px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 5px; z-index: 5; }
-        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
+        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; margin-bottom: 4px; }
         .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); animation: pulse 2s infinite; }
+        
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
@@ -35,50 +56,55 @@
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); }
         .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1rem; }
+        
+        .timer-slot { height: 45px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 25px; border: 1px dashed rgba(0, 242, 255, 0.3); transition: opacity 0.3s; }
+        .hidden-timer { opacity: 0; }
+        
         .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.7rem; padding: 0.8rem; height: 140px; overflow-y: auto; color: var(--led-cyan); }
     </style>
 </head>
 <body>
-    <div class="online-sidebar" id="sidebar">
-        <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Operadores (<span id="userCount">0</span>)</div>
-        <div id="userList" class="flex flex-col gap-1"></div>
-    </div>
 
-    <div class="main-card">
-        <div class="text-center">
-            <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
-            <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
+    <div class="wrapper">
+        <div class="online-sidebar" id="sidebar">
+            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Operadores (<span id="userCount">0</span>)</div>
+            <div id="userList" class="flex flex-col gap-1"></div>
         </div>
 
-        <div class="px-6">
-            <div class="flex justify-between text-[8px] text-cyan-400 mb-2 font-bold uppercase">
-                <span>Master Volume</span><span id="volLabel">20%</span>
+        <div class="main-card">
+            <div class="text-center title-section">
+                <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
+                <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
             </div>
-            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.2" class="w-full">
-        </div>
 
-        <div>
-            <div class="flex justify-between px-1">
-                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
-                <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
-                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
+            <div class="px-6 vol-section">
+                <div class="flex justify-between text-[8px] text-cyan-400 font-bold uppercase">
+                    <span>Master Volume</span><span id="volLabel">20%</span>
+                </div>
+                <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.2" class="w-full">
             </div>
-            <div class="px-2">
-                <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
-            </div>
-            
-            <div class="timer-slot">
-                <div id="timer-display" class="hidden-timer">
-                    <span id="timer-count">30</span>s
+
+            <div>
+                <div class="flex justify-between px-1">
+                    <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
+                    <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
+                    <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
+                </div>
+                <div class="px-2">
+                    <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
+                </div>
+                <div class="timer-slot">
+                    <div id="timer-display" class="hidden-timer"><span id="timer-count">30</span>s</div>
                 </div>
             </div>
-        </div>
 
-        <div id="log" class="log-container">> System Online...</div>
+            <div id="log" class="log-container">> System Online...</div>
 
-        <div class="flex flex-col items-center pb-1">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="w-16 opacity-90 mb-1">
-            <div class="text-[8px] text-cyan-400 font-bold tracking-[0.2em] uppercase">KitsuDevWorks</div>
+            <div class="flex flex-col items-center pb-1">
+                <img src="KitsuLogo2.png" alt="Kitsu" class="w-16 opacity-90 mb-1">
+                <div class="text-[8px] text-cyan-400 font-bold tracking-[0.2em] uppercase">KitsuDevWorks</div>
+            </div>
         </div>
     </div>
 
@@ -94,7 +120,6 @@
         const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
         let onlineUsers = {}, isTimerActive = false, hasConfirmedWay = false, countdown;
 
-        // Inicializar volumen bajo
         Object.values(sounds).forEach(s => s.volume = 0.2);
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
@@ -137,14 +162,13 @@
             let s = 30; 
             const timerEl = document.getElementById('timer-display');
             timerEl.classList.remove('hidden-timer');
-            timerEl.classList.add('visible-timer');
 
             countdown = setInterval(() => {
                 s--; document.getElementById('timer-count').innerText = s;
                 if (s <= 0) { 
                     clearInterval(countdown); 
                     isTimerActive = false; 
-                    timerEl.classList.replace('visible-timer', 'hidden-timer'); 
+                    timerEl.classList.add('hidden-timer'); 
                     updateUI(); 
                 }
             }, 1000);
