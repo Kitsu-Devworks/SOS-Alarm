@@ -11,87 +11,94 @@
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
-        /* Contenedor relativo para que la viñeta se pegue a la derecha */
-        .wrapper { position: relative; display: flex; align-items: center; }
+        .wrapper { position: relative; display: flex; align-items: center; width: 100%; justify-content: center; }
 
-        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; position: relative; }
+        /* BOX PRINCIPAL: Más ancho para que no se vea "flaco" */
+        .main-card { 
+            width: 90%; 
+            max-width: 550px; /* Aumentado de 450px a 550px */
+            height: 95vh; 
+            max-height: 850px; 
+            background: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(0, 242, 255, 0.3); 
+            border-radius: 2.5rem; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            padding: 1.5rem 2rem; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.6); 
+            z-index: 10; 
+            position: relative; 
+        }
 
-        /* VIÑETA DE OPERADORES A LA DERECHA */
+        /* VIÑETA OPERADORES */
         .online-sidebar { 
             position: absolute; 
-            left: 100%; /* Lo pega justo donde termina el card */
-            top: 50px; 
-            width: 130px; 
-            background: rgba(0, 20, 30, 0.8); 
+            left: 100%; 
+            top: 60px; 
+            width: 140px; 
+            background: rgba(0, 20, 30, 0.85); 
             border: 1px solid rgba(0, 242, 255, 0.3);
             border-left: 4px solid var(--led-cyan);
-            padding: 12px; 
+            padding: 15px; 
             font-family: 'JetBrains Mono'; 
-            border-radius: 0 15px 15px 0; /* Redondeado solo a la derecha */
+            border-radius: 0 20px 20px 0; 
             z-index: 5;
-            box-shadow: 10px 0 20px rgba(0,0,0,0.5);
+            box-shadow: 10px 0 25px rgba(0,0,0,0.5);
         }
 
-        @media (max-width: 850px) { 
-            .online-sidebar { position: absolute; left: auto; right: 10px; top: 10px; width: 100px; border-radius: 10px; font-size: 8px; } 
-        }
+        /* VOLUMEN */
+        #volControl { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 8px; border: 1px solid rgba(0, 242, 255, 0.3); margin-top: 5px; }
+        #volControl::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); border-radius: 2px; cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); }
 
-        /* VOLUMEN ESTILIZADO */
-        #volControl { -webkit-appearance: none; background: rgba(0, 242, 255, 0.1); border-radius: 5px; height: 6px; border: 1px solid rgba(0, 242, 255, 0.3); margin-top: 5px; }
-        #volControl::-webkit-slider-thumb { -webkit-appearance: none; width: 15px; height: 15px; background: var(--led-cyan); border-radius: 2px; cursor: pointer; box-shadow: 0 0 10px var(--led-cyan); }
-
-        /* ESPACIADOS SOLICITADOS (0.5cm aprox 19px) */
-        .title-section { margin-bottom: 20px; } /* Separa titulo de Master Volume */
-        .vol-section { margin-bottom: 20px; } /* Separa volumen de botones */
-
-        .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; margin-bottom: 4px; }
-        .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); animation: pulse 2s infinite; }
+        /* ESPACIADOS */
+        .title-section { margin-bottom: 25px; } 
+        .vol-section { margin-bottom: 25px; } 
         
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        /* SEPARACIÓN TIMER DEL LOG (0.5cm) */
+        .timer-slot { height: 50px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; } 
 
-        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
-        .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
-        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); color: var(--led-green); }
-        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
-        .btn-hard { border-color: var(--led-red); color: var(--led-red); }
-        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1rem; }
-        
-        .timer-slot { height: 45px; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 25px; border: 1px dashed rgba(0, 242, 255, 0.3); transition: opacity 0.3s; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 12px; padding: 5px 35px; border: 1px dashed rgba(0, 242, 255, 0.4); transition: opacity 0.3s; }
         .hidden-timer { opacity: 0; }
+
+        .btn-raid { width: 100px; height: 100px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
+        .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 14px; margin-top: 1.5rem; }
         
-        .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.7rem; padding: 0.8rem; height: 140px; overflow-y: auto; color: var(--led-cyan); }
+        .log-container { background: rgba(0, 0, 0, 0.85); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; height: 150px; overflow-y: auto; color: var(--led-cyan); }
+
+        /* LOGO AGRANDADO UN 30% */
+        .logo-kitsu { width: 110px; /* Antes ~80px, subido un 30% aprox */ opacity: 1; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.2)); }
     </style>
 </head>
 <body>
 
     <div class="wrapper">
         <div class="online-sidebar" id="sidebar">
-            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Operadores (<span id="userCount">0</span>)</div>
+            <div class="text-[9px] opacity-50 mb-2 uppercase font-bold text-cyan-400 tracking-wider">Operadores (<span id="userCount">0</span>)</div>
             <div id="userList" class="flex flex-col gap-1"></div>
         </div>
 
         <div class="main-card">
             <div class="text-center title-section">
-                <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
-                <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
+                <h1 class="text-xl font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
+                <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[11px] p-2.5 rounded mt-3 font-mono outline-none w-2/3 text-center uppercase tracking-widest">
             </div>
 
-            <div class="px-6 vol-section">
-                <div class="flex justify-between text-[8px] text-cyan-400 font-bold uppercase">
+            <div class="px-8 vol-section">
+                <div class="flex justify-between text-[9px] text-cyan-400 font-bold uppercase tracking-widest">
                     <span>Master Volume</span><span id="volLabel">20%</span>
                 </div>
                 <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.2" class="w-full">
             </div>
 
             <div>
-                <div class="flex justify-between px-1">
-                    <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
-                    <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
-                    <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
+                <div class="flex justify-between px-4">
+                    <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                    <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                    <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
                 </div>
-                <div class="px-2">
+                <div class="px-4">
                     <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
                 </div>
                 <div class="timer-slot">
@@ -101,9 +108,8 @@
 
             <div id="log" class="log-container">> System Online...</div>
 
-            <div class="flex flex-col items-center pb-1">
-                <img src="KitsuLogo2.png" alt="Kitsu" class="w-16 opacity-90 mb-1">
-                <div class="text-[8px] text-cyan-400 font-bold tracking-[0.2em] uppercase">KitsuDevWorks</div>
+            <div class="flex flex-col items-center pb-2">
+                <img src="KitsuLogo2.png" alt="Kitsu" class="logo-kitsu">
             </div>
         </div>
     </div>
@@ -135,7 +141,7 @@
             const now = Date.now(); let html = ''; let count = 0;
             for (let u in onlineUsers) {
                 if (now - onlineUsers[u] > 20000) { delete onlineUsers[u]; continue; }
-                html += `<div class="user-tag"><div class="status-dot"></div>${u}</div>`; count++;
+                html += `<div class="user-tag text-[10px] text-cyan-400 flex items-center gap-2 mb-1 uppercase font-mono"><div class="w-1.5 h-1.5 bg-green-400 rounded-full shadow-[0_0_5px_#4ade80] animate-pulse"></div>${u}</div>`; count++;
             }
             document.getElementById('userList').innerHTML = html;
             document.getElementById('userCount').innerText = count;
