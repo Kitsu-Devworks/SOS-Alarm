@@ -3,22 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Raid | Kitsu DevWorks</title>
+    <title>Dungeon Control | Kitsu DevWorks</title>
+    
     <link rel="icon" type="image/png" href="KitsuLogoMini.png">
+    
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
         :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
-        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
+        body { 
+            font-family: 'Orbitron', sans-serif; 
+            background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); 
+            height: 100vh; margin: 0; overflow: hidden; 
+            display: flex; align-items: center; justify-content: center; 
+            position: relative; 
+        }
+        
+        /* TÍTULO PRO CON DEGRADADO */
+        .pro-title {
+            background: linear-gradient(90deg, #00f2ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3));
+            letter-spacing: 2px;
+        }
+
         .fixed-logo { position: fixed; bottom: 10px; right: 5px; width: 110px; height: auto; opacity: 0.6; z-index: 100; filter: drop-shadow(0 0 5px var(--led-cyan)); pointer-events: none; }
 
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
 
+        /* VOLUMEN SIDEBAR */
         .vol-sidebar { position: absolute; left: -90px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
         .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
-        
         .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
         
         input[type=range].compat-slider { 
@@ -31,8 +50,10 @@
             border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan);
         }
 
+        /* ONLINE SIDEBAR */
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
+        /* MAIN CARD */
         .main-card { 
             width: 450px; height: 90vh; max-height: 780px; 
             background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); 
@@ -40,6 +61,7 @@
             display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; overflow: hidden;
         }
 
+        /* ESTADOS LOGICA */
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
 
@@ -72,7 +94,7 @@
 
         <div class="main-card">
             <div class="text-center">
-                <h1 class="text-xl font-black italic text-cyan-400 mb-2">DUNGEON RAID CONTROL</h1>
+                <h1 class="text-2xl font-black italic mb-2 pro-title">DUNGEON CONTROL</h1>
                 <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-4 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
@@ -150,7 +172,7 @@
             const now = Date.now();
             let html = '', count = 0;
             for (let u in onlineUsers) {
-                // Aumentado a 40 segundos para mayor estabilidad en PC
+                // Margen de 40 segundos para estabilidad total en PC
                 if (now - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
                 html += `<div class="flex items-center gap-2 text-[9px] text-cyan-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_5px_#00ff88]"></div>${u.toUpperCase()}</div>`;
                 count++;
@@ -217,9 +239,7 @@
             document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%";
         });
 
-        // Pulso cada 10 segundos
         setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
-        // Renderizar lista cada 5 segundos
         setInterval(renderOnline, 5000);
         
         nameField.addEventListener('input', updateUI);
