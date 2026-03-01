@@ -12,10 +12,27 @@
         body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
         
         .wrapper { position: relative; display: flex; align-items: center; }
-        .main-card { width: 95%; max-width: 450px; height: 95vh; max-height: 850px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); border: 1px solid rgba(0, 242, 255, 0.3); border-radius: 2rem; display: flex; flex-direction: column; justify-content: space-between; padding: 1.2rem; box-shadow: 0 0 30px rgba(0,0,0,0.5); z-index: 10; }
+
+        /* BOX PRINCIPAL: Ensanchado para evitar que sea estrecho */
+        .main-card { 
+            width: 95%; 
+            max-width: 520px; /* Aumentado para que los botones no estén juntos */
+            height: 95vh; 
+            max-height: 850px; 
+            background: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(0, 242, 255, 0.3); 
+            border-radius: 2rem; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            padding: 1.5rem; 
+            box-shadow: 0 0 30px rgba(0,0,0,0.5); 
+            z-index: 10; 
+        }
         
         /* Viñeta a la derecha */
-        .online-sidebar { position: absolute; left: 100%; top: 40px; width: 120px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; z-index: 5; }
+        .online-sidebar { position: absolute; left: 100%; top: 40px; width: 130px; background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 10px; font-family: 'JetBrains Mono'; border-radius: 0 10px 10px 0; z-index: 5; }
         .user-tag { font-size: 9px; color: var(--led-cyan); display: flex; align-items: center; gap: 5px; text-transform: uppercase; }
         .status-dot { width: 5px; height: 5px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 5px var(--led-green); animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
@@ -26,17 +43,21 @@
 
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
-        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
+        
+        /* Botones con más espacio entre ellos */
+        .btn-raid { width: 95px; height: 95px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; border: 3px solid transparent; }
         .btn-easy { border-color: var(--led-green); color: var(--led-green); }
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); }
-        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 12px; margin-top: 1.2rem; }
         
-        /* Timer Slot Fijo */
-        .timer-slot { height: 40px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.5rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 15px; border: 1px dashed rgba(0, 242, 255, 0.3); opacity: 0; transition: opacity 0.3s; }
+        .btn-way { width: 100%; padding: 14px; border-radius: 12px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 13px; margin-top: 1.2rem; }
         
-        .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.7rem; padding: 0.8rem; height: 140px; overflow-y: auto; color: var(--led-cyan); }
+        /* Timer Slot con separación de 0.5cm arriba y abajo */
+        .timer-slot { height: 50px; display: flex; align-items: center; justify-content: center; margin-top: 20px; margin-bottom: 20px; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); background: rgba(0, 242, 255, 0.05); border-radius: 10px; padding: 5px 25px; border: 1px dashed rgba(0, 242, 255, 0.3); opacity: 0; transition: opacity 0.3s; }
+        
+        /* Log agrandado para 4 líneas */
+        .log-container { background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 1rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 0.8rem; height: 110px; overflow-y: auto; color: var(--led-cyan); line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -47,21 +68,24 @@
         </div>
 
         <div class="main-card">
-            <div class="text-center mb-[20px]"> <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
+            <div class="text-center mb-[20px]">
+                <h1 class="text-lg font-black italic text-cyan-400 tracking-tighter uppercase">Dungeon Raid Control</h1>
                 <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mt-2 font-mono outline-none w-2/3 text-center uppercase">
             </div>
 
-            <div class="px-6 mb-[20px]"> <div class="flex justify-between text-[8px] text-cyan-400 font-bold uppercase"><span>Master Volume</span><span id="volLabel">20%</span></div>
+            <div class="px-6 mb-[20px]">
+                <div class="flex justify-between text-[8px] text-cyan-400 font-bold uppercase"><span>Master Volume</span><span id="volLabel">20%</span></div>
                 <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.2" class="w-full">
             </div>
 
             <div>
-                <div class="flex justify-between px-1">
-                    <button id="easyBtn" class="btn-raid btn-easy"><span class="text-xl">🛡️</span><span class="text-[7px] font-black uppercase">Easy</span></button>
-                    <button id="medBtn" class="btn-raid btn-medium"><span class="text-xl">⚔️</span><span class="text-[7px] font-black uppercase">Medium</span></button>
-                    <button id="hardBtn" class="btn-raid btn-hard"><span class="text-xl">💀</span><span class="text-[7px] font-black uppercase">Hard</span></button>
+                <div class="flex justify-between px-2">
+                    <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                    <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                    <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
                 </div>
                 <div class="px-2"><button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button></div>
+                
                 <div class="timer-slot">
                     <div id="timer-display"><span id="timer-count">30</span>s</div>
                 </div>
@@ -69,8 +93,9 @@
 
             <div id="log" class="log-container">> System Online...</div>
 
-            <div class="flex flex-col items-center pt-2">
-                <img src="KitsuLogo2.png" alt="Kitsu" class="w-[104px]"> </div>
+            <div class="flex flex-col items-center pt-4">
+                <img src="KitsuLogo2.png" alt="Kitsu" class="w-[104px]">
+            </div>
         </div>
     </div>
 
