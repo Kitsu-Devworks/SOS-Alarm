@@ -28,13 +28,14 @@
         input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan); }
 
-        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; margin-bottom: 15px; width: 100%; }
+        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; margin-bottom: 10px; width: 100%; }
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; letter-spacing: 1px; }
         .game-opt.active { background: var(--led-cyan); color: #000; box-shadow: 0 0 10px var(--led-cyan); }
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
-        .main-card { width: 450px; height: 90vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; overflow: hidden; }
+        /* AJUSTE CARD PRINCIPAL: Reducido padding para ganar espacio */
+        .main-card { width: 450px; height: 95vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1rem; box-sizing: border-box; overflow: hidden; }
 
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
@@ -46,21 +47,22 @@
 
         .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
 
-        /* AJUSTE PARA QUE EL LOG NO SE MUEVA */
+        /* AJUSTE TIMER: Más compacto para ahorrar espacio vertical */
         .timer-block { 
-            height: 65px; 
+            height: 50px; 
             width: 100%; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            margin: 5px 0;
+            margin: 2px 0;
             flex-shrink: 0;
         }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); }
         .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; margin-bottom: 10px; }
+        /* AJUSTE LOG: Ahora se expande para ocupar todo el espacio disponible */
+        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; }
     </style>
 </head>
 <body>
@@ -77,8 +79,8 @@
 
         <div class="main-card">
             <div class="text-center">
-                <h1 class="text-2xl font-black italic mb-2 pro-title">DUNGEON CONTROL</h1>
-                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-4 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
+                <h1 class="text-2xl font-black italic mb-1 pro-title">DUNGEON CONTROL</h1>
+                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
             <div class="game-selector">
@@ -86,7 +88,7 @@
                 <div id="modeOP" class="game-opt" onclick="setMode('OP')">ONE PIECE</div>
             </div>
 
-            <div class="flex justify-between px-1 mb-4">
+            <div class="flex justify-between px-1 mb-3">
                 <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
                 <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
                 <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
@@ -102,11 +104,7 @@
 
             <div id="log" class="log-container">> System Online...</div>
 
-            <div class="flex flex-col items-center pt-2">
-                <div class="text-[9px] text-cyan-400 font-bold uppercase tracking-widest">Kitsu DevWorks</div>
-                <div class="text-[7px] text-slate-500 font-bold uppercase opacity-40">Premium Infrastructure • v6.5</div>
             </div>
-        </div>
 
         <div class="online-sidebar">
             <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Online (<span id="userCount">0</span>)</div>
