@@ -3,162 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Raid | Kitsu DevWorks</title>
+    <title>Dungeon Control | Kitsu DevWorks</title>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { 
-            --led-green: #00ff88; 
-            --led-yellow: #facc15; 
-            --led-red: #ff3e3e; 
-            --led-cyan: #00f2ff; 
-            --bg-dark: #05050a;
+            --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; --bg-dark: #05050a;
         }
         
         body { 
             font-family: 'Rajdhani', sans-serif; 
             background-color: var(--bg-dark);
-            background-image: 
-                radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 60%),
-                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-            background-size: 100% 100%, 30px 30px, 30px 30px;
+            background-image: radial-gradient(circle at 50% 50%, rgba(0, 242, 255, 0.05) 0%, transparent 60%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 25px 25px, 25px 25px;
             height: 100vh; margin: 0; overflow: hidden; 
-            display: flex; align-items: center; justify-content: center; position: relative; 
-            color: white;
+            display: flex; align-items: center; justify-content: center; color: white;
         }
 
-        /* Ampliado de 420px a 550px para mejor legibilidad */
         .main-card { 
-            width: 95%; max-width: 550px; height: 90vh; max-height: 800px; 
-            background: rgba(5, 5, 15, 0.6); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            width: 95%; max-width: 520px; height: 92vh; 
+            background: rgba(5, 5, 15, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(0, 242, 255, 0.15); border-radius: 24px; 
-            display: flex; flex-direction: column; justify-content: space-between; 
-            padding: 1.8rem; box-shadow: 0 20px 50px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,242,255,0.05); 
-            z-index: 10; 
+            display: flex; flex-direction: column; padding: 1.5rem; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.8); z-index: 10; position: relative;
         }
         
         .online-sidebar { 
-            position: absolute; right: -140px; top: 30px; width: 130px; 
+            position: absolute; right: -135px; top: 20px; width: 125px; 
             background: rgba(10, 10, 20, 0.6); backdrop-filter: blur(10px);
             border: 1px solid rgba(0, 242, 255, 0.1); border-left: 2px solid var(--led-cyan); 
-            padding: 15px; font-family: 'JetBrains Mono', monospace; 
-            border-radius: 0 12px 12px 0; z-index: 5; 
-            box-shadow: 15px 0 30px rgba(0,0,0,0.5);
+            padding: 12px; font-family: 'JetBrains Mono', monospace; border-radius: 0 12px 12px 0;
         }
-        @media (max-width: 900px) { 
-            .online-sidebar { position: static; width: 100%; border: 1px solid rgba(0, 242, 255, 0.1); border-bottom: 2px solid var(--led-cyan); border-radius: 12px; margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 10px; } 
-        }
+        @media (max-width: 900px) { .online-sidebar { display: none; } }
 
-        .user-tag { font-size: 11px; color: #a0aec0; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s; }
-        .user-tag:hover { color: var(--led-cyan); }
+        .user-tag { font-size: 11px; color: #a0aec0; display: flex; align-items: center; gap: 6px; text-transform: uppercase; margin-bottom: 4px; }
         .status-dot { width: 6px; height: 6px; background: var(--led-green); border-radius: 50%; box-shadow: 0 0 8px var(--led-green); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(0.8); } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
         .input-aesthetic {
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(0, 242, 255, 0.2); 
-            color: var(--led-cyan); font-family: 'JetBrains Mono', monospace;
-            transition: all 0.3s ease;
+            color: var(--led-cyan); font-family: 'JetBrains Mono', monospace; width: 80%;
         }
-        .input-aesthetic:focus { border-color: var(--led-cyan); box-shadow: 0 0 15px rgba(0,242,255,0.2); outline: none; background: rgba(0, 242, 255, 0.05); }
 
-        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); filter: grayscale(1); }
+        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s ease; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
         
         .btn-raid { 
-            width: 90px; height: 90px; border-radius: 20px; 
+            width: 85px; height: 85px; border-radius: 18px; 
             display: flex; flex-direction: column; align-items: center; justify-content: center; 
-            cursor: pointer; border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5);
-            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.1); background: rgba(0,0,0,0.5);
         }
-        .btn-raid:active { transform: scale(0.92); }
-        .btn-easy { color: var(--led-green); box-shadow: 0 8px 20px rgba(0,255,136,0.1); }
-        .btn-easy:hover { border-color: var(--led-green); box-shadow: 0 8px 25px rgba(0,255,136,0.3); }
-        .btn-medium { color: var(--led-yellow); box-shadow: 0 8px 20px rgba(250,204,21,0.1); }
-        .btn-medium:hover { border-color: var(--led-yellow); box-shadow: 0 8px 25px rgba(250,204,21,0.3); }
-        .btn-hard { color: var(--led-red); box-shadow: 0 8px 20px rgba(255,62,62,0.1); }
-        .btn-hard:hover { border-color: var(--led-red); box-shadow: 0 8px 25px rgba(255,62,62,0.3); }
         
         .btn-way { 
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--led-cyan); 
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--led-cyan); 
             color: var(--bg-dark); background: var(--led-cyan); font-weight: 700; 
-            text-transform: uppercase; font-size: 15px; letter-spacing: 2px; 
-            margin-top: 1.5rem; box-shadow: 0 0 20px rgba(0,242,255,0.3);
-        }
-        .btn-way:hover { box-shadow: 0 0 30px rgba(0,242,255,0.6); }
-
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; height: 20px; }
-        input[type=range]:focus { outline: none; }
-        input[type=range]::-webkit-slider-runnable-track { 
-            width: 100%; height: 4px; cursor: pointer; background: rgba(0, 242, 255, 0.2); border-radius: 2px; 
-        }
-        input[type=range]::-webkit-slider-thumb { 
-            height: 16px; width: 24px; border-radius: 4px; background: var(--led-cyan); cursor: pointer; 
-            -webkit-appearance: none; margin-top: -6px; box-shadow: 0 0 10px var(--led-cyan); 
+            text-transform: uppercase; font-size: 14px; margin-top: 1rem;
+            box-shadow: 0 0 15px rgba(0,242,255,0.3);
         }
 
         #timer-display { 
-            font-family: 'JetBrains Mono', monospace; font-size: 2.2rem; color: var(--led-cyan); 
-            text-shadow: 0 0 15px var(--led-cyan); display: none; justify-content: center; align-items: center; 
+            font-family: 'JetBrains Mono', monospace; font-size: 1.8rem; color: var(--led-cyan); 
+            text-shadow: 0 0 10px var(--led-cyan); display: none; justify-content: center; align-items: center;
+            margin: 0.5rem 0;
         }
         
-        /* Log Container más grande y legible */
         .log-container { 
             background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px; 
-            padding: 1.2rem; height: 160px; overflow-y: auto; color: #e2e8f0; line-height: 1.6; 
-            box-shadow: inset 0 5px 15px rgba(0,0,0,0.5);
+            border-radius: 12px; font-family: 'JetBrains Mono', monospace; font-size: 12px; 
+            padding: 1rem; flex-grow: 1; overflow-y: auto; color: #e2e8f0; line-height: 1.4;
+            margin-bottom: 1rem;
         }
-        .log-container::-webkit-scrollbar { width: 5px; }
-        .log-container::-webkit-scrollbar-track { background: transparent; }
+        .log-container::-webkit-scrollbar { width: 4px; }
         .log-container::-webkit-scrollbar-thumb { background: rgba(0, 242, 255, 0.3); border-radius: 10px; }
-        .log-container::-webkit-scrollbar-thumb:hover { background: var(--led-cyan); }
     </style>
 </head>
 <body>
     <div class="main-card">
         <div class="online-sidebar" id="sidebar">
-            <div class="text-[11px] text-cyan-500/80 mb-3 uppercase font-bold tracking-widest border-b border-cyan-500/20 pb-1">En Línea (<span id="userCount">0</span>)</div>
-            <div id="userList" class="flex flex-col gap-2"></div>
+            <div class="text-[10px] text-cyan-500/80 mb-2 uppercase font-bold tracking-widest border-b border-cyan-500/20 pb-1">En Línea (<span id="userCount">0</span>)</div>
+            <div id="userList"></div>
         </div>
 
-        <div class="text-center mt-2 mb-4">
-            <h1 class="text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-blue-400 to-cyan-400 tracking-widest uppercase drop-shadow-[0_0_15px_rgba(0,242,255,0.5)] mb-4">Dungeon Control</h1>
-            <input type="text" id="userName" placeholder="INGRESA TU NICK" maxlength="10" class="input-aesthetic text-center text-[13px] p-3 rounded-lg w-2/3 uppercase font-bold tracking-widest">
+        <div class="text-center">
+            <h1 class="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-blue-400 tracking-widest uppercase drop-shadow-[0_0_10px_rgba(0,242,255,0.4)] mb-3">Dungeon Control</h1>
+            <input type="text" id="userName" placeholder="NICKNAME" maxlength="10" class="input-aesthetic text-center text-[12px] p-2 rounded-lg uppercase font-bold tracking-widest">
         </div>
 
-        <div class="px-4 mt-2 mb-6">
-            <div class="flex justify-between text-[11px] text-cyan-400 mb-2 font-bold uppercase tracking-widest font-mono">
-                <span>Audio System</span><span id="volLabel">50%</span>
+        <div class="px-4 mt-4">
+            <div class="flex justify-between text-[10px] text-cyan-400 mb-1 font-bold uppercase tracking-widest font-mono">
+                <span>Audio</span><span id="volLabel">50%</span>
             </div>
-            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.5">
+            <input type="range" id="volControl" min="0" max="1" step="0.01" value="0.5" class="w-full accent-cyan-400">
         </div>
 
-        <div class="mb-4">
-            <div class="flex justify-between px-4 gap-4">
+        <div class="mt-4">
+            <div class="flex justify-around gap-2 px-2">
                 <button id="easyBtn" class="btn-raid btn-easy">
-                    <span class="text-3xl mb-1">🛡️</span>
-                    <span class="text-[11px] font-bold uppercase tracking-wider font-mono">Easy</span>
+                    <span class="text-2xl">🛡️</span>
+                    <span class="text-[9px] font-bold uppercase mt-1">Easy</span>
                 </button>
                 <button id="medBtn" class="btn-raid btn-medium">
-                    <span class="text-3xl mb-1">⚔️</span>
-                    <span class="text-[11px] font-bold uppercase tracking-wider font-mono">Medium</span>
+                    <span class="text-2xl">⚔️</span>
+                    <span class="text-[9px] font-bold uppercase mt-1">Medium</span>
                 </button>
                 <button id="hardBtn" class="btn-raid btn-hard">
-                    <span class="text-3xl mb-1">💀</span>
-                    <span class="text-[11px] font-bold uppercase tracking-wider font-mono">Hard</span>
+                    <span class="text-2xl">💀</span>
+                    <span class="text-[9px] font-bold uppercase mt-1">Hard</span>
                 </button>
             </div>
-            <div class="px-2 mt-2"><button id="wayBtn" class="btn-way">🏃‍♂️ Voy en camino</button></div>
+            <button id="wayBtn" class="btn-way">🏃‍♂️ Voy en camino</button>
         </div>
 
-        <div class="flex justify-center h-14"><div id="timer-display"><span id="timer-count" class="font-bold">30</span><span class="text-[16px] ml-1 opacity-50">SEC</span></div></div>
+        <div id="timer-display"><span id="timer-count" class="font-bold">30</span><span class="text-[12px] ml-1 opacity-50">S</span></div>
         
-        <div id="log" class="log-container">> Inicializando terminal Kitsu...<br>> Esperando operadores...</div>
+        <div id="log" class="log-container">> Esperando señales...</div>
         
-        <div class="flex flex-col items-center mt-4">
-            <img src="KitsuLogo2.png" alt="Kitsu" class="w-24 opacity-90 drop-shadow-[0_0_15px_rgba(0,242,255,0.4)]">
+        <div class="flex justify-center mt-auto">
+            <img src="KitsuLogo2.png" alt="Kitsu" class="w-20 opacity-90 drop-shadow-[0_0_10px_rgba(0,242,255,0.3)]">
         </div>
     </div>
 
@@ -205,8 +169,8 @@
             onlineUsers[name.toUpperCase()] = Date.now(); renderOnline();
             if (type === 'PULSE') return;
             if (sounds[type]) { sounds[type].currentTime = 0; sounds[type].play().catch(()=>{}); }
-            if (type !== 'WAY') { startTimer(); addLog(`ALERTA: ${name} REQUIERE APOYO EN ${type}`, type); }
-            else { addLog(`CONFIRMADO: ${name} ESTÁ EN CAMINO`, 'WAY'); }
+            if (type !== 'WAY') { startTimer(); addLog(`ALERTA: ${name} APOYO EN ${type}`, type); }
+            else { addLog(`${name} EN CAMINO`, 'WAY'); }
         });
 
         function startTimer() {
@@ -222,8 +186,8 @@
         function addLog(msg, type) {
             const colors = { EASY: 'var(--led-green)', MEDIUM: 'var(--led-yellow)', HARD: 'var(--led-red)', WAY: 'var(--led-cyan)' };
             const log = document.getElementById('log');
-            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit', second:'2-digit'});
-            log.innerHTML = `<div><span style="color:#4a5568">[${time}]</span> <span style="color:${colors[type]}">> ${msg}</span></div>` + log.innerHTML;
+            const time = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            log.innerHTML = `<div><span style="color:#666">[${time}]</span> <span style="color:${colors[type]}">> ${msg}</span></div>` + log.innerHTML;
         }
 
         setInterval(() => sendSignal('PULSE'), 10000); setInterval(renderOnline, 5000);
