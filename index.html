@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Control | Kitsu DevWorks</title>
+    <title>Dungeon Raid | Kitsu DevWorks</title>
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -18,31 +18,16 @@
         .vol-sidebar { position: absolute; left: -80px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 70px; pointer-events: all; }
         .vol-label { width: 70px; text-align: center; font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 12px; }
         
-        .vol-track-container { position: relative; width: 10px; height: 200px; }
-
         input[type=range].vertical { 
-            appearance: none; -webkit-appearance: none; 
-            width: 10px; height: 200px; 
-            background: rgba(0, 0, 0, 0.6); 
-            border: 1px solid rgba(0, 242, 255, 0.4); 
-            border-radius: 5px; outline: none;
-            -webkit-appearance: slider-vertical;
-            overflow: hidden;
+            appearance: none; -webkit-appearance: none; width: 10px; height: 200px; 
+            background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); 
+            border-radius: 5px; outline: none; -webkit-appearance: slider-vertical; overflow: hidden;
         }
-
         input[type=range].vertical::-webkit-slider-thumb { 
-            -webkit-appearance: none; 
-            width: 16px; height: 16px; 
-            background: var(--led-cyan); 
-            border: 2px solid #fff; 
-            border-radius: 2px;
-            box-shadow: 0 0 15px var(--led-cyan), -200px 0 0 200px var(--led-cyan);
-            cursor: pointer;
+            -webkit-appearance: none; width: 16px; height: 16px; background: var(--led-cyan); 
+            border: 2px solid #fff; border-radius: 2px;
+            box-shadow: 0 0 15px var(--led-cyan), -200px 0 0 200px var(--led-cyan); cursor: pointer;
         }
-
-        input[type=range].vertical::-moz-range-progress { background-color: var(--led-cyan); border-radius: 5px; }
-        input[type=range].vertical::-moz-range-track { background-color: rgba(0, 0, 0, 0.6); border-radius: 5px; }
-        input[type=range].vertical::-moz-range-thumb { width: 16px; height: 16px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 2px; box-shadow: 0 0 15px var(--led-cyan); cursor: pointer; }
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
@@ -53,25 +38,22 @@
             display: flex; flex-direction: column; padding: 1.5rem; box-sizing: border-box; overflow: hidden;
         }
 
-        .pro-title { font-size: 1.6rem; font-weight: 900; text-transform: uppercase; background: linear-gradient(to bottom, #fff, var(--led-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
+        .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
 
-        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; opacity: 0.15; transition: 0.3s; filter: grayscale(1); }
-        .enabled { opacity: 1 !important; filter: grayscale(0) !important; cursor: pointer; }
+        .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
         .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
 
-        .timer-block { height: 60px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; flex-shrink: 0; }
-        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2.2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
-        .timer-critical { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
+        .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
+
+        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 5px 0; }
+        #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 2rem; color: var(--led-cyan); display: none; text-shadow: 0 0 15px var(--led-cyan); }
+        .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
         @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
 
-        .log-container { 
-            background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); 
-            border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; 
-            padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); 
-            width: 100%; box-sizing: border-box; margin-bottom: 5px;
-        }
+        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; margin-bottom: 10px; }
     </style>
 </head>
 <body>
@@ -81,30 +63,33 @@
     <div class="app-container">
         <div class="vol-sidebar">
             <span id="volLabel" class="vol-label">50%</span>
-            <div class="vol-track-container">
-                <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
-            </div>
+            <input type="range" id="volControl" class="vertical" min="0" max="1" step="0.01" value="0.5">
         </div>
 
         <div class="main-card">
             <div class="text-center">
-                <h1 class="pro-title">Dungeon Control</h1>
+                <h1 class="text-xl font-black italic text-cyan-400 mb-2">DUNGEON RAID CONTROL</h1>
                 <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-4 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
             <div class="flex justify-between px-1 mb-4">
-                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-3xl">🛡️</span><span class="text-[9px] font-black uppercase mt-1">Easy</span></button>
-                <button id="medBtn" class="btn-raid btn-medium"><span class="text-3xl">⚔️</span><span class="text-[9px] font-black uppercase mt-1">Medium</span></button>
-                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-3xl">💀</span><span class="text-[9px] font-black uppercase mt-1">Hard</span></button>
+                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
             </div>
 
-            <button id="wayBtn" class="btn-way bg-cyan-500/10 border-2 border-cyan-400 text-cyan-400 w-full py-4 rounded-2xl font-black text-[11px] uppercase tracking-widest opacity-15 pointer-events-none transition-all">🏃‍♂️ En Camino</button>
+            <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
 
             <div class="timer-block">
                 <div id="timer-display"><span id="timer-count">30</span>s</div>
             </div>
 
-            <div id="log" class="log-container">> System Ready...</div>
+            <div id="log" class="log-container">> System Online...</div>
+
+            <div class="flex flex-col items-center pt-2">
+                <div class="text-[9px] text-cyan-400 font-bold uppercase tracking-widest">Kitsu DevWorks</div>
+                <div class="text-[7px] text-slate-500 font-bold uppercase opacity-40">Premium Infrastructure • v6.5</div>
+            </div>
         </div>
 
         <div class="online-sidebar">
@@ -113,44 +98,37 @@
         </div>
     </div>
 
+    <audio id="sndEASY" src="https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3" preload="auto"></audio>
+    <audio id="sndMEDIUM" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
+    <audio id="sndHARD" src="https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3" preload="auto"></audio>
+    <audio id="sndWAY" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
+
     <script>
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
         const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
+
         const nameField = document.getElementById('userName');
         const diffButtons = document.querySelectorAll('.btn-raid');
         const wayBtn = document.getElementById('wayBtn');
         const timerDisplay = document.getElementById('timer-display');
         const timerCount = document.getElementById('timer-count');
-        const sounds = { 
-            EASY: new Audio('https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3'), 
-            MEDIUM: new Audio('https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'), 
-            HARD: new Audio('https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3'), 
-            WAY: new Audio('https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3') 
-        };
+        const sounds = { EASY: document.getElementById('sndEASY'), MEDIUM: document.getElementById('sndMEDIUM'), HARD: document.getElementById('sndHARD'), WAY: document.getElementById('sndWAY') };
         
         let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
 
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
-            if (!hasName) { 
-                diffButtons.forEach(b => b.classList.remove('enabled')); 
-                wayBtn.classList.remove('enabled'); 
-                wayBtn.classList.add('pointer-events-none');
-                return; 
+            if (!hasName) {
+                diffButtons.forEach(b => b.classList.remove('enabled'));
+                wayBtn.classList.remove('enabled');
+                return;
             }
             if (isTimerActive) {
                 diffButtons.forEach(b => b.classList.remove('enabled'));
-                if (!hasConfirmedWay) {
-                    wayBtn.classList.add('enabled');
-                    wayBtn.classList.remove('pointer-events-none');
-                } else {
-                    wayBtn.classList.remove('enabled');
-                    wayBtn.classList.add('pointer-events-none');
-                }
+                (!hasConfirmedWay) ? wayBtn.classList.add('enabled') : wayBtn.classList.remove('enabled');
             } else {
                 diffButtons.forEach(b => b.classList.add('enabled'));
                 wayBtn.classList.remove('enabled');
-                wayBtn.classList.add('pointer-events-none');
             }
         }
 
@@ -171,40 +149,52 @@
 
         channel.bind('client-sos', (data) => {
             const [name, type] = data.user.split('|');
-            onlineUsers[name.toUpperCase()] = Date.now(); renderOnline();
+            onlineUsers[name.toUpperCase()] = Date.now(); 
+            renderOnline();
             if (type === 'PULSE') return;
-            if (sounds[type]) { 
-                sounds[type].currentTime = 0; 
-                sounds[type].volume = document.getElementById('volControl').value;
-                sounds[type].play().catch(()=>{}); 
+            const s = sounds[type];
+            const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
+            if (s) { s.currentTime = 0; s.play().catch(()=>{}); }
+            if (type !== 'WAY') {
+                startTimer();
+                addLog(`¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
+            } else {
+                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
             }
-            if (type !== 'WAY') { startTimer(); addLog(`¡${name.toUpperCase()} PIDE ${type}!`, type); }
-            else { addLog(`${name.toUpperCase()} EN CAMINO`, 'WAY'); }
         });
 
         async function sendSignal(type) {
             const user = nameField.value.trim();
             if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
-            try { await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) }); } catch (e) {}
+            try {
+                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}` }) });
+            } catch (e) {}
         }
 
         function startTimer() {
-            clearInterval(countdown); isTimerActive = true; hasConfirmedWay = false; updateUI();
-            let s = 30; timerDisplay.style.display = 'block'; 
-            timerDisplay.classList.remove('timer-critical');
+            clearInterval(countdown);
+            isTimerActive = true; hasConfirmedWay = false; updateUI();
+            let s = 30;
+            timerDisplay.style.display = 'block';
             timerCount.innerText = s;
+            timerDisplay.classList.remove('timer-warning');
             countdown = setInterval(() => {
-                s--; timerCount.innerText = s;
-                if (s <= 10) timerDisplay.classList.add('timer-critical');
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; timerDisplay.style.display = 'none'; updateUI(); }
+                s--;
+                timerCount.innerText = s;
+                if (s <= 10) timerDisplay.classList.add('timer-warning');
+                if (s <= 0) {
+                    clearInterval(countdown);
+                    isTimerActive = false;
+                    timerDisplay.style.display = 'none';
+                    updateUI();
+                }
             }, 1000);
         }
 
-        function addLog(msg, type) {
-            const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
+        function addLog(msg, color) {
             const log = document.getElementById('log');
-            log.innerHTML = `<div style="color:${colors[type]}">> ${msg}</div>` + log.innerHTML;
+            log.innerHTML = `<div style="color:${color}">> ${msg}</div>` + log.innerHTML;
         }
 
         document.getElementById('volControl').oninput = (e) => {
@@ -215,7 +205,7 @@
 
         setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
         setInterval(renderOnline, 5000);
-        nameField.oninput = updateUI;
+        nameField.addEventListener('input', updateUI);
         document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
         document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
         document.getElementById('hardBtn').onclick = () => sendSignal('HARD');
