@@ -28,9 +28,15 @@
         input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan); }
 
-        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; margin-bottom: 10px; width: 100%; }
+        .game-selector-container { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
+        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; flex-grow: 1; }
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; letter-spacing: 1px; }
         .game-opt.active { background: var(--led-cyan); color: #000; box-shadow: 0 0 10px var(--led-cyan); }
+
+        /* BOTÓN DE ORDEN (D y R) */
+        .order-btn { width: 65px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--led-cyan); transition: 0.2s; }
+        .order-btn:hover { border-color: var(--led-cyan); }
+        .order-text { font-size: 8px; font-weight: 900; margin-top: -2px; }
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
 
@@ -72,9 +78,15 @@
                 <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-cyan-400">
             </div>
 
-            <div class="game-selector">
-                <div id="modeSL" class="game-opt active" onclick="setMode('SL')">SOLO LEVELING</div>
-                <div id="modeOP" class="game-opt" onclick="setMode('OP')">ONE PIECE</div>
+            <div class="game-selector-container">
+                <div class="game-selector">
+                    <div id="modeSL" class="game-opt active" onclick="setMode('SL')">SOLO LEVELING</div>
+                    <div id="modeOP" class="game-opt" onclick="setMode('OP')">ONE PIECE</div>
+                </div>
+                <div id="orderBtn" class="order-btn" onclick="toggleOrder()">
+                    <span class="text-[12px]">🔄</span>
+                    <span id="orderLabel" class="order-text">D ➜ R</span>
+                </div>
             </div>
 
             <div class="flex justify-between px-1 mb-3">
@@ -104,11 +116,17 @@
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
         const CLOUDFLARE_URL = 'https://dungeon-sos.kitsu-devworks.workers.dev';
         let currentMode = 'SL';
+        let currentOrder = 'DR'; // DR = Dung -> Raid, RD = Raid -> Dung
 
         function setMode(mode) {
             currentMode = mode;
             document.getElementById('modeSL').classList.toggle('active', mode === 'SL');
             document.getElementById('modeOP').classList.toggle('active', mode === 'OP');
+        }
+
+        function toggleOrder() {
+            currentOrder = (currentOrder === 'DR') ? 'RD' : 'DR';
+            document.getElementById('orderLabel').innerText = (currentOrder === 'DR') ? 'D ➜ R' : 'R ➜ D';
         }
 
         const nameField = document.getElementById('userName');
@@ -167,7 +185,7 @@
         const channel = pusher.subscribe('dungeon-channel');
 
         channel.bind('client-sos', (data) => {
-            const [name, type, mode] = data.user.split('|');
+            const [name, type, mode, order] = data.user.split('|');
             onlineUsers[name.toUpperCase()] = Date.now(); 
             renderOnline();
             if (type === 'PULSE') return;
@@ -178,7 +196,14 @@
 
             if (type !== 'WAY') {
                 startTimer();
-                addLog(`[${gameLabel}] ¡${name.toUpperCase()} PIDE DUNG ${type}!`, colors[type]);
+                // Construcción lógica del mensaje según el orden recibido
+                let actionMsg = "";
+                if (order === 'RD') {
+                    actionMsg = `PIDE RAID Y DUNG ${type}`;
+                } else {
+                    actionMsg = `PIDE DUNG ${type} Y RAID`;
+                }
+                addLog(`[${gameLabel}] ¡${name.toUpperCase()} ${actionMsg}!`, colors[type]);
             } else {
                 addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
             }
@@ -189,7 +214,8 @@
             if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
             try {
-                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}|${currentMode}` }) });
+                // Ahora enviamos 4 datos: Nick | Tipo | Modo | Orden
+                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}|${currentMode}|${currentOrder}` }) });
             } catch (e) {}
         }
 
