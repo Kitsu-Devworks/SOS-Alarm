@@ -33,7 +33,9 @@
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; letter-spacing: 1px; }
         .game-opt.active { background: var(--led-cyan); color: #000; box-shadow: 0 0 10px var(--led-cyan); }
 
+        /* BOTÓN DE ORDEN (D y R) */
         .order-btn { width: 65px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--led-cyan); transition: 0.2s; }
+        .order-btn:hover { border-color: var(--led-cyan); }
         .order-text { font-size: 8px; font-weight: 900; margin-top: -2px; }
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
@@ -111,11 +113,11 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN PARA GRUPO 2
+        // --- CAMBIOS PARA EL GRUPO 2 ---
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
-        // CAMBIAR POR LA URL DE TU SEGUNDO WORKER DE CLOUDFLARE
-        const CLOUDFLARE_URL = 'https://dungeon-sos-grupo2.kitsu-devworks.workers.dev'; 
+        const CLOUDFLARE_URL = 'https://dungeon-sos-grupo2.kitsu-devworks.workers.dev';
         const CANAL_NOMBRE = 'dungeon-channel-2';
+        // ------------------------------
 
         let currentMode = 'SL';
         let currentOrder = 'DR'; 
@@ -152,7 +154,7 @@
             if (!url) return;
             const audio = new Audio(url);
             audio.volume = parseFloat(volControl.value);
-            audio.play().catch(e => {});
+            audio.play().catch(e => console.log("Sound play error"));
         }
 
         function updateUI() {
