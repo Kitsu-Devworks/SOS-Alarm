@@ -3,89 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>G2 Control | Kitsu DevWorks</title>
+    <title>Dungeon Control G2 | Kitsu DevWorks</title>
+    
     <link rel="icon" type="image/png" href="KitsuLogoMini.png">
+    
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #00f2ff; }
-        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #0a0a1a 0%, #020205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
-        .pro-title { background: linear-gradient(90deg, #00f2ff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(0, 242, 255, 0.3)); letter-spacing: 2px; }
+        /* CAMBIO DE COLOR A PÚRPURA PARA EL GRUPO 2 */
+        :root { --led-green: #00ff88; --led-yellow: #facc15; --led-red: #ff3e3e; --led-cyan: #d400ff; }
+        
+        body { font-family: 'Orbitron', sans-serif; background: radial-gradient(circle at center, #1a0a1a 0%, #050205 100%); height: 100vh; margin: 0; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
+        
+        .pro-title { background: linear-gradient(90deg, #d400ff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 10px rgba(212, 0, 255, 0.3)); letter-spacing: 2px; }
+
         .fixed-logo { position: fixed; bottom: 10px; right: 5px; width: 110px; height: auto; opacity: 0.6; z-index: 100; filter: drop-shadow(0 0 5px var(--led-cyan)); pointer-events: none; }
+
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
+
         .vol-sidebar { position: absolute; left: -90px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
         .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
         .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
-        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
+        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(212, 0, 255, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--led-cyan); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--led-cyan); }
+
         .game-selector-container { display: flex; gap: 8px; width: 100%; margin-bottom: 10px; }
-        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; padding: 4px; flex-grow: 1; }
+        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(212,0,255,0.2); border-radius: 12px; padding: 4px; flex-grow: 1; }
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; letter-spacing: 1px; }
         .game-opt.active { background: var(--led-cyan); color: #000; box-shadow: 0 0 10px var(--led-cyan); }
-        .order-btn { width: 65px; background: rgba(0,0,0,0.4); border: 1px solid rgba(0,242,255,0.2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--led-cyan); transition: 0.2s; }
+
+        .order-btn { width: 65px; background: rgba(0,0,0,0.4); border: 1px solid rgba(212,0,255,0.2); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: var(--led-cyan); transition: 0.2s; }
+        .order-btn:hover { border-color: var(--led-cyan); }
         .order-text { font-size: 8px; font-weight: 900; margin-top: -2px; }
-        .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(0, 242, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
-        .main-card { width: 450px; height: 95vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(0, 242, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1rem; box-sizing: border-box; overflow: hidden; }
+
+        .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(212, 0, 255, 0.2); border-left: 3px solid var(--led-cyan); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
+
+        .main-card { width: 450px; height: 95vh; max-height: 780px; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(212, 0, 255, 0.2); border-radius: 2.5rem; display: flex; flex-direction: column; padding: 1rem; box-sizing: border-box; overflow: hidden; }
+
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
+
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
         .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: 0 0 15px rgba(0, 255, 136, 0.3); }
         .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.3); }
         .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: 0 0 15px rgba(255, 62, 62, 0.3); }
-        .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(0, 242, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
-        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 2px 0; }
+
+        .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--led-cyan); color: var(--led-cyan); background: rgba(212, 0, 255, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; letter-spacing: 2px; margin-top: 10px; }
+
+        .timer-block { height: 50px; width: 100%; display: flex; align-items: center; justify-content: center; margin: 2px 0; flex-shrink: 0; }
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); }
         .timer-warning { color: var(--led-red) !important; animation: pulse-red 0.5s infinite alternate; }
-        @keyframes pulse-red { from { transform: scale(1); } to { transform: scale(1.1); } }
-        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); }
+
+        .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; color: var(--led-cyan); box-sizing: border-box; }
     </style>
 </head>
 <body>
+
     <img src="KitsuLogo2.png" alt="Kitsu" class="fixed-logo">
+
     <div class="app-container">
         <div class="vol-sidebar">
             <span id="volLabel" class="vol-label">50%</span>
-            <div class="slider-wrapper"><input type="range" id="volControl" class="compat-slider" min="0" max="1" step="0.01" value="0.5"></div>
+            <div class="slider-wrapper">
+                <input type="range" id="volControl" class="compat-slider" min="0" max="1" step="0.01" value="0.5">
+            </div>
         </div>
+
         <div class="main-card">
             <div class="text-center">
-                <h1 class="text-2xl font-black italic mb-1 pro-title">DUNGEON CONTROL V3</h1>
-                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-cyan-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase">
+                <h1 class="text-2xl font-black italic mb-1 pro-title">DUNGEON CONTROL G2</h1>
+                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-purple-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-purple-400">
             </div>
+
             <div class="game-selector-container">
                 <div class="game-selector">
                     <div id="modeSL" class="game-opt active" onclick="setMode('SL')">SOLO LEVELING</div>
                     <div id="modeOP" class="game-opt" onclick="setMode('OP')">ONE PIECE</div>
                 </div>
                 <div id="orderBtn" class="order-btn" onclick="toggleOrder()">
-                    <span>🔄</span><span id="orderLabel" class="order-text">D ➜ R</span>
+                    <span class="text-[12px]">🔄</span>
+                    <span id="orderLabel" class="order-text">D ➜ R</span>
                 </div>
             </div>
+
             <div class="flex justify-between px-1 mb-3">
-                <button id="easyBtn" class="btn-raid btn-easy">🛡️<span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
-                <button id="medBtn" class="btn-raid btn-medium">⚔️<span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
-                <button id="hardBtn" class="btn-raid btn-hard">💀<span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
+                <button id="easyBtn" class="btn-raid btn-easy"><span class="text-2xl">🛡️</span><span class="text-[8px] font-black uppercase mt-1">Easy</span></button>
+                <button id="medBtn" class="btn-raid btn-medium"><span class="text-2xl">⚔️</span><span class="text-[8px] font-black uppercase mt-1">Medium</span></button>
+                <button id="hardBtn" class="btn-raid btn-hard"><span class="text-2xl">💀</span><span class="text-[8px] font-black uppercase mt-1">Hard</span></button>
             </div>
+
             <button id="wayBtn" class="btn-way">🏃‍♂️ Confirmar en camino</button>
+
             <div class="timer-block">
-                <div id="timer-display" class="opacity-0 transition-opacity duration-300"><span id="timer-count">30</span>s</div>
+                <div id="timer-display" class="opacity-0 transition-opacity duration-300">
+                    <span id="timer-count">30</span>s
+                </div>
             </div>
-            <div id="log" class="log-container">> System G2 Online...</div>
+
+            <div id="log" class="log-container">> System Online G2...</div>
         </div>
+
         <div class="online-sidebar">
-            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-cyan-400">Online (<span id="userCount">0</span>)</div>
+            <div class="text-[8px] opacity-50 mb-2 uppercase font-bold text-purple-400">Online G2 (<span id="userCount">0</span>)</div>
             <div id="userList"></div>
         </div>
     </div>
 
     <script>
-        // CONFIGURACIÓN GRUPO 2
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
-        const CLOUDFLARE_URL = 'https://sos2.kitsu-devworks.workers.dev'; 
-        const CANAL_NOMBRE = 'dungeon-channel-2'; 
-
-        let currentMode = 'SL', currentOrder = 'DR', countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
+        // URL DEL NUEVO WORKER GRUPO 2
+        const CLOUDFLARE_URL = 'https://dungeon-sos-grupo2.kitsu-devworks.workers.dev/';
+        
+        let currentMode = 'SL';
+        let currentOrder = 'DR';
 
         function setMode(mode) {
             currentMode = mode;
@@ -111,11 +143,15 @@
             HARD: "https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3", 
             WAY: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" 
         };
+        
+        let countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
 
         function playAlert(type) {
-            const audio = new Audio(soundUrls[type]);
+            const url = soundUrls[type];
+            if (!url) return;
+            const audio = new Audio(url);
             audio.volume = parseFloat(volControl.value);
-            audio.play().catch(e => console.log("Clic requerido para audio"));
+            audio.play().catch(e => console.log("Sound play error"));
         }
 
         function updateUI() {
@@ -134,8 +170,21 @@
             }
         }
 
+        function renderOnline() {
+            const now = Date.now();
+            let html = '', count = 0;
+            for (let u in onlineUsers) {
+                if (now - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
+                html += `<div class="flex items-center gap-2 text-[9px] text-purple-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_5px_#00ff88]"></div>${u.toUpperCase()}</div>`;
+                count++;
+            }
+            document.getElementById('userList').innerHTML = html;
+            document.getElementById('userCount').innerText = count;
+        }
+
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
-        const channel = pusher.subscribe(CANAL_NOMBRE);
+        // SE SUSCRIBE AL CANAL 2
+        const channel = pusher.subscribe('dungeon-channel-2');
 
         channel.bind('client-sos', (data) => {
             const [name, type, mode, order] = data.user.split('|');
@@ -144,13 +193,15 @@
             if (type === 'PULSE') return;
             
             playAlert(type);
+            const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#d400ff' };
             const gameLabel = mode === 'OP' ? 'ONE PIECE' : 'SOLO LEVELING';
+
             if (type !== 'WAY') {
                 startTimer();
                 let actionMsg = (order === 'RD') ? `PIDE RAID Y DUNG ${type}` : `PIDE DUNG ${type} Y RAID`;
-                addLog(`[${gameLabel}] ¡${name.toUpperCase()} ${actionMsg}!`, type === 'EASY' ? '#00ff88' : type === 'MEDIUM' ? '#facc15' : '#ff3e3e');
+                addLog(`[${gameLabel}] ¡${name.toUpperCase()} ${actionMsg}!`, colors[type]);
             } else {
-                addLog(`${name.toUpperCase()} VA EN CAMINO!`, '#00f2ff');
+                addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors.WAY);
             }
         });
 
@@ -158,61 +209,56 @@
             const user = nameField.value.trim();
             if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
-            
-            // USANDO MODO SEGURO 'no-cors' IGUAL QUE EN EL GRUPO 1
             try {
+                // EL WORKER 2 YA SABE QUE DEBE USAR EL CANAL 2
                 await fetch(CLOUDFLARE_URL, { 
                     method: 'POST', 
                     mode: 'no-cors', 
                     body: JSON.stringify({ user: `${user}|${type}|${currentMode}|${currentOrder}` }) 
                 });
-            } catch (e) { console.log("Error de envío"); }
+            } catch (e) {}
         }
 
         function startTimer() {
             clearInterval(countdown);
             isTimerActive = true; hasConfirmedWay = false; updateUI();
             let s = 30;
-            timerDisplay.classList.replace('opacity-0', 'opacity-100');
+            timerDisplay.classList.remove('opacity-0');
+            timerDisplay.classList.add('opacity-100');
             timerCount.innerText = s;
+            timerDisplay.classList.remove('timer-warning');
             countdown = setInterval(() => {
-                s--; timerCount.innerText = s;
+                s--;
+                timerCount.innerText = s;
                 if (s <= 10) timerDisplay.classList.add('timer-warning');
-                if (s <= 0) { 
-                    clearInterval(countdown); 
-                    isTimerActive = false; 
-                    timerDisplay.classList.replace('opacity-100', 'opacity-0'); 
-                    timerDisplay.classList.remove('timer-warning');
-                    updateUI(); 
+                if (s <= 0) {
+                    clearInterval(countdown);
+                    isTimerActive = false;
+                    timerDisplay.classList.remove('opacity-100');
+                    timerDisplay.classList.add('opacity-0');
+                    updateUI();
                 }
             }, 1000);
         }
 
         function addLog(msg, color) {
             const log = document.getElementById('log');
-            const timeStr = `[${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}]`;
+            const now = new Date();
+            const timeStr = `[${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}]`;
             log.innerHTML = `<div style="color:${color}">> ${timeStr} ${msg}</div>` + log.innerHTML;
         }
 
-        function renderOnline() {
-            let html = '', count = 0;
-            for (let u in onlineUsers) {
-                if (Date.now() - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
-                html += `<div class="flex items-center gap-2 text-[9px] text-cyan-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_5px_#00ff88]"></div>${u.toUpperCase()}</div>`;
-                count++;
-            }
-            document.getElementById('userList').innerHTML = html;
-            document.getElementById('userCount').innerText = count;
-        }
+        volControl.addEventListener('input', (e) => {
+            document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%";
+        });
 
-        volControl.oninput = (e) => document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%";
-        nameField.oninput = updateUI;
+        setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
+        setInterval(renderOnline, 5000);
+        nameField.addEventListener('input', updateUI);
         document.getElementById('easyBtn').onclick = () => sendSignal('EASY');
         document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
         document.getElementById('hardBtn').onclick = () => sendSignal('HARD');
         document.getElementById('wayBtn').onclick = () => sendSignal('WAY');
-        setInterval(() => { if (nameField.value.length >= 2) sendSignal('PULSE'); }, 10000);
-        setInterval(renderOnline, 5000);
     </script>
 </body>
 </html>
