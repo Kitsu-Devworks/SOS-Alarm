@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Control 2| Kitsu DevWorks</title>
+    <title>G2 Control | Kitsu DevWorks</title>
     <link rel="icon" type="image/png" href="KitsuLogoMini.png">
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -80,9 +80,10 @@
     </div>
 
     <script>
+        // --- CONFIGURACIÓN GRUPO 2 ---
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
         const CLOUDFLARE_URL = 'https://sos2.kitsu-devworks.workers.dev'; 
-        const CANAL_NOMBRE = 'dungeon-channel-2';
+        const CANAL_NOMBRE = 'dungeon-channel-2'; // CANAL INDEPENDIENTE
 
         let currentMode = 'SL', currentOrder = 'DR', countdown, isTimerActive = false, hasConfirmedWay = false, onlineUsers = {};
 
@@ -114,7 +115,7 @@
         function playAlert(type) {
             const audio = new Audio(soundUrls[type]);
             audio.volume = parseFloat(volControl.value);
-            audio.play().catch(e => {});
+            audio.play().catch(e => console.log("Permiso de audio requerido"));
         }
 
         function updateUI() {
@@ -133,6 +134,7 @@
             }
         }
 
+        // Suscripción a Pusher
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
         const channel = pusher.subscribe(CANAL_NOMBRE);
 
@@ -141,6 +143,7 @@
             onlineUsers[name.toUpperCase()] = Date.now(); 
             renderOnline();
             if (type === 'PULSE') return;
+            
             playAlert(type);
             const gameLabel = mode === 'OP' ? 'ONE PIECE' : 'SOLO LEVELING';
             if (type !== 'WAY') {
@@ -156,9 +159,18 @@
             const user = nameField.value.trim();
             if (!user || user.length < 2) return;
             if (type === 'WAY') { hasConfirmedWay = true; updateUI(); }
+            
             try {
-                await fetch(CLOUDFLARE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ user: `${user}|${type}|${currentMode}|${currentOrder}` }) });
-            } catch (e) {}
+                // Ajustado a 'cors' para asegurar que el Worker reciba el body correctamente
+                await fetch(CLOUDFLARE_URL, { 
+                    method: 'POST', 
+                    mode: 'cors', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user: `${user}|${type}|${currentMode}|${currentOrder}` }) 
+                });
+            } catch (e) {
+                console.error("Error en el envío:", e);
+            }
         }
 
         function startTimer() {
@@ -170,7 +182,13 @@
             countdown = setInterval(() => {
                 s--; timerCount.innerText = s;
                 if (s <= 10) timerDisplay.classList.add('timer-warning');
-                if (s <= 0) { clearInterval(countdown); isTimerActive = false; timerDisplay.classList.replace('opacity-100', 'opacity-0'); updateUI(); }
+                if (s <= 0) { 
+                    clearInterval(countdown); 
+                    isTimerActive = false; 
+                    timerDisplay.classList.replace('opacity-100', 'opacity-0'); 
+                    timerDisplay.classList.remove('timer-warning');
+                    updateUI(); 
+                }
             }, 1000);
         }
 
@@ -182,9 +200,10 @@
 
         function renderOnline() {
             let html = '', count = 0;
+            const now = Date.now();
             for (let u in onlineUsers) {
-                if (Date.now() - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
-                html += `<div class="flex items-center gap-2 text-[9px] text-cyan-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>${u.toUpperCase()}</div>`;
+                if (now - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
+                html += `<div class="flex items-center gap-2 text-[9px] text-cyan-400 mb-1"><div class="w-1.5 h-1.5 bg-green-500 rounded-full shadow-[0_0_5px_#00ff88]"></div>${u.toUpperCase()}</div>`;
                 count++;
             }
             document.getElementById('userList').innerHTML = html;
@@ -197,6 +216,8 @@
         document.getElementById('medBtn').onclick = () => sendSignal('MEDIUM');
         document.getElementById('hardBtn').onclick = () => sendSignal('HARD');
         document.getElementById('wayBtn').onclick = () => sendSignal('WAY');
+        
+        // Pulso de presencia cada 10s
         setInterval(() => { if (nameField.value.length >= 2) sendSignal('PULSE'); }, 10000);
         setInterval(renderOnline, 5000);
     </script>
