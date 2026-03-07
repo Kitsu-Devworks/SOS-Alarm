@@ -19,17 +19,14 @@
 
         .fixed-logo { position: fixed; bottom: 20px; right: 80px; width: 150px; height: auto; opacity: 0.8; z-index: 100; filter: drop-shadow(0 0 15px var(--p-glow)); pointer-events: none; }
 
-        /* PANEL FLOTANTE DE ROTACIÓN (Izquierda Superior) */
+        /* PANEL FLOTANTE DE ROTACIÓN */
         .rotation-panel { position: absolute; left: 20px; top: 20px; width: 200px; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 1.5rem; padding: 15px; z-index: 50; box-shadow: 0 0 20px rgba(188, 19, 254, 0.2); }
         .rotation-title { font-size: 8px; color: var(--p-glow); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid rgba(188, 19, 254, 0.2); padding-bottom: 5px; text-align: center; }
-        
-        .mission-row { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .mission-row:last-child { border-bottom: none; }
+        .mission-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .mission-number { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--led-cyan); font-weight: 900; width: 15px; }
-        .mission-name { flex-grow: 1; font-size: 9px; font-weight: 700; color: #fff; transition: 0.3s; }
-        .btn-order { background: rgba(188, 19, 254, 0.2); width: 25px; height: 15px; border-radius: 4px; font-size: 8px; color: var(--led-cyan); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .btn-order:hover { background: var(--p-glow); color: white; }
-        .mission-check { width: 16px; height: 16px; border: 2px solid var(--p-glow); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.3s; }
+        .mission-name { flex-grow: 1; font-size: 9px; font-weight: 700; color: #fff; }
+        .btn-order { background: rgba(188, 19, 254, 0.2); width: 22px; height: 15px; border-radius: 4px; font-size: 8px; color: var(--led-cyan); cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .mission-check { width: 16px; height: 16px; border: 2px solid var(--p-glow); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .mission-check.active { background: var(--p-glow); box-shadow: 0 0 8px var(--p-glow); }
         .mission-check.active::after { content: '✓'; color: white; font-size: 10px; font-weight: 900; }
 
@@ -37,31 +34,38 @@
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
         .glass-panel { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(188, 19, 254, 0.2); width: 450px; height: 95vh; max-height: 780px; border-radius: 2.5rem; display: flex; flex-direction: column; padding: 2rem; box-sizing: border-box; overflow: hidden; }
 
-        /* VOLUMEN (Debajo del panel de rotación) */
+        /* SELECTORES */
+        .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 12px; padding: 4px; margin-bottom: 10px; }
+        .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; }
+        .game-opt.active { background: var(--p-glow); color: #fff; box-shadow: 0 0 10px var(--p-glow); }
+
+        /* VOLUMEN */
         .vol-sidebar { position: absolute; left: -90px; top: 60%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
         .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
         .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
-        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(188, 19, 254, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
+        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--p-glow); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--p-glow); }
 
+        /* ONLINE SIDEBAR CON PARPADEO */
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(188, 19, 254, 0.2); border-left: 3px solid var(--p-glow); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
         .online-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse-slow 2s infinite; }
-        
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; filter: brightness(1.2); } 50% { opacity: 0.4; filter: brightness(0.8); } }
+
+        /* BOTONES NEON */
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
-
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); color: var(--led-green); }
-        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
-        .btn-hard { border-color: var(--led-red); color: var(--led-red); }
-
+        .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: inset 0 0 10px rgba(0,255,136,0.2); }
+        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: inset 0 0 10px rgba(250,204,21,0.2); }
+        .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: inset 0 0 10px rgba(255,62,62,0.2); }
         .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--p-glow); color: var(--p-glow); background: rgba(188, 19, 254, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; margin-top: 10px; }
 
+        /* TIMER Y SHAKE */
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); transition: all 0.2s; }
         .timer-critical { color: var(--led-red) !important; text-shadow: 0 0 20px var(--led-red) !important; animation: shake 0.2s infinite; }
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 25% { transform: translate(-1px, -1px); } 50% { transform: translate(-1px, 1px); } 75% { transform: translate(1px, -1px); } 100% { transform: translate(1px, 1px); } }
 
         .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; }
-        
         .exit-btn { font-size: 8px; font-weight: 900; color: #ff3e3e; border: 1px solid rgba(255, 62, 62, 0.3); padding: 4px 8px; border-radius: 8px; margin-top: 12px; cursor: pointer; }
     </style>
 </head>
@@ -87,6 +91,11 @@
                 <p id="roomDisplay" class="text-[8px] text-purple-400/50 mb-1 uppercase font-bold tracking-widest">PRIVATE SERVER CONNECTED</p>
                 <h1 class="text-2xl font-black italic mb-1 pro-title">DUNGEON CONTROL</h1>
                 <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-purple-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-purple-400">
+            </div>
+
+            <div class="game-selector">
+                <div id="modeSL" class="game-opt active" onclick="setMode('SL')">SOLO LEVELING</div>
+                <div id="modeOP" class="game-opt" onclick="setMode('OP')">ONE PIECE</div>
             </div>
 
             <div class="flex justify-between px-1 mb-3">
@@ -125,9 +134,11 @@
         if (!ROOM_ID) window.location.href = 'index.html';
         document.getElementById('roomDisplay').innerText = `SALA PRIVADA: ${ROOM_ID}`;
 
-        let isTimerActive = false, onlineUsers = {}, hasConfirmedWay = false;
-        
-        let missions = [
+        let currentMode = 'SL', isTimerActive = false, onlineUsers = {}, hasConfirmedWay = false;
+
+        // PERSISTENCIA DE MISIONES
+        let savedMissions = localStorage.getItem('kitsu_mission_order');
+        let missions = savedMissions ? JSON.parse(savedMissions) : [
             { id: 'DUNGEON', name: 'DUNGEON', active: true },
             { id: 'CASTLE', name: 'CASTLE', active: true },
             { id: 'RAID', name: 'RAID', active: true }
@@ -140,13 +151,15 @@
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
         const channel = pusher.subscribe(`dungeon-room-${ROOM_ID}-${ROOM_PIN}`);
 
+        function saveMissionPrefs() { localStorage.setItem('kitsu_mission_order', JSON.stringify(missions)); }
+
         function renderMissions() {
             const container = document.getElementById('missionList');
             container.innerHTML = missions.map((m, index) => `
                 <div class="mission-row">
                     <span class="mission-number">${index + 1}.</span>
                     <div class="mission-check ${m.active ? 'active' : ''}" onclick="toggleMission(${index})"></div>
-                    <span class="mission-name" style="opacity: ${m.active ? '1' : '0.3'}">${m.name}</span>
+                    <span class="mission-name" style="opacity: ${m.active ? '1' : '0.4'}">${m.name}</span>
                     <div class="flex flex-col gap-1">
                         <div class="btn-order" onclick="moveMission(${index}, -1)">▲</div>
                         <div class="btn-order" onclick="moveMission(${index}, 1)">▼</div>
@@ -155,16 +168,16 @@
             `).join('');
         }
 
-        function toggleMission(index) { missions[index].active = !missions[index].active; renderMissions(); }
+        function toggleMission(index) { missions[index].active = !missions[index].active; saveMissionPrefs(); renderMissions(); }
         function moveMission(index, direction) {
             const newIndex = index + direction;
             if (newIndex >= 0 && newIndex < missions.length) {
-                const temp = missions[index];
-                missions[index] = missions[newIndex];
-                missions[newIndex] = temp;
-                renderMissions();
+                const temp = missions[index]; missions[index] = missions[newIndex]; missions[newIndex] = temp;
+                saveMissionPrefs(); renderMissions();
             }
         }
+
+        function setMode(mode) { currentMode = mode; document.getElementById('modeSL').classList.toggle('active', mode === 'SL'); document.getElementById('modeOP').classList.toggle('active', mode === 'OP'); }
 
         function playAlert(type) {
             const audio = new Audio(soundUrls[type]);
@@ -179,14 +192,14 @@
         channel.bind('client-sos', (data) => {
             let payload = typeof data === 'string' ? JSON.parse(data) : data;
             if(!payload.user || payload.user === 'PULSE') return;
-            const [name, type, missionChain] = payload.user.split('|');
+            const [name, type, missionChain, gameMode] = payload.user.split('|');
             onlineUsers[name.toUpperCase()] = Date.now();
             renderOnline();
             if (type !== 'PULSE') {
                 playAlert(type);
                 const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
                 if (type === 'WAY') { addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors[type]); } 
-                else { startTimer(); addLog(`${name.toUpperCase()} PIDE ${missionChain} [${type}]`, colors[type]); }
+                else { startTimer(); addLog(`${name.toUpperCase()} (${gameMode}) PIDE: ${missionChain} [${type}]`, colors[type]); }
             }
         });
 
@@ -198,7 +211,7 @@
             try {
                 await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ user: `${user}|${type}|${activeMissions || 'MISIÓN'}`, roomId: ROOM_ID, pin: ROOM_PIN })
+                    body: JSON.stringify({ user: `${user}|${type}|${activeMissions || 'MISIÓN'}|${currentMode}`, roomId: ROOM_ID, pin: ROOM_PIN })
                 });
             } catch (e) { if (type === 'WAY') hasConfirmedWay = false; }
         }
@@ -221,8 +234,7 @@
         function updateUI() {
             const hasName = nameField.value.trim().length >= 2;
             document.querySelectorAll('.btn-raid').forEach(b => b.classList.toggle('enabled', hasName && !isTimerActive));
-            const wayBtn = document.getElementById('wayBtn');
-            wayBtn.classList.toggle('enabled', hasName && isTimerActive && !hasConfirmedWay);
+            document.getElementById('wayBtn').classList.toggle('enabled', hasName && isTimerActive && !hasConfirmedWay);
         }
 
         function renderOnline() {
