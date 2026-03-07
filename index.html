@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dungeon Control | Kitsu DevWorks</title>
+    <title>Dungeon Control | Public Hub</title>
     
     <link rel="icon" type="image/png" href="KitsuLogoMini.png">
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
@@ -19,8 +19,8 @@
 
         .fixed-logo { position: fixed; bottom: 20px; right: 80px; width: 150px; height: auto; opacity: 0.8; z-index: 100; filter: drop-shadow(0 0 15px var(--p-glow)); pointer-events: none; }
 
-        /* PANEL FLOTANTE DE ROTACIÓN */
-        .rotation-panel { position: absolute; left: 20px; top: 20px; width: 200px; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 1.5rem; padding: 15px; z-index: 50; box-shadow: 0 0 20px rgba(188, 19, 254, 0.2); }
+        /* PANEL FLOTANTE */
+        .rotation-panel { position: absolute; left: 20px; top: 20px; width: 200px; background: rgba(0,0,0,0.8); backdrop-filter: blur(15px); border: 1px solid rgba(188, 19, 254, 0.3); border-radius: 1.5rem; padding: 15px; z-index: 50; }
         .rotation-title { font-size: 8px; color: var(--p-glow); font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; border-bottom: 1px solid rgba(188, 19, 254, 0.2); padding-bottom: 5px; text-align: center; }
         .mission-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .mission-number { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--led-cyan); font-weight: 900; width: 15px; }
@@ -34,7 +34,6 @@
         .app-container { position: relative; width: 450px; display: flex; justify-content: center; align-items: center; }
         .glass-panel { background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(25px); border: 2px solid rgba(188, 19, 254, 0.2); width: 450px; height: 95vh; max-height: 780px; border-radius: 2.5rem; display: flex; flex-direction: column; padding: 2rem; box-sizing: border-box; overflow: hidden; }
 
-        /* SELECTORES */
         .game-selector { display: flex; background: rgba(0,0,0,0.4); border: 1px solid rgba(188, 19, 254, 0.2); border-radius: 12px; padding: 4px; margin-bottom: 10px; }
         .game-opt { flex: 1; padding: 8px; font-size: 9px; color: rgba(255,255,255,0.3); cursor: pointer; transition: 0.3s; text-align: center; border-radius: 8px; font-weight: 900; }
         .game-opt.active { background: var(--p-glow); color: #fff; box-shadow: 0 0 10px var(--p-glow); }
@@ -43,28 +42,28 @@
         .vol-sidebar { position: absolute; left: -90px; top: 60%; transform: translateY(-50%); display: flex; flex-direction: column; align-items: center; width: 80px; }
         .vol-label { font-family: 'JetBrains Mono'; font-weight: bold; font-size: 11px; color: var(--led-cyan); text-shadow: 0 0 8px var(--led-cyan); margin-bottom: 90px; }
         .slider-wrapper { transform: rotate(-90deg); width: 200px; height: 20px; display: flex; align-items: center; justify-content: center; }
-        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.4); border-radius: 10px; outline: none; cursor: pointer; }
+        input[type=range].compat-slider { -webkit-appearance: none; width: 200px; height: 6px; background: rgba(0,0,0,0.6); border: 1px solid rgba(188, 19, 254, 0.4); border-radius: 10px; outline: none; }
         input[type=range].compat-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 18px; height: 18px; background: var(--p-glow); border: 2px solid #fff; border-radius: 4px; box-shadow: 0 0 10px var(--p-glow); }
 
         .online-sidebar { position: absolute; right: -135px; top: 100px; width: 125px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(188, 19, 254, 0.2); border-left: 3px solid var(--p-glow); padding: 12px; border-radius: 0 15px 15px 0; backdrop-filter: blur(10px); }
         .online-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse-slow 2s infinite; }
-        @keyframes pulse-slow { 0%, 100% { opacity: 1; filter: brightness(1.2); } 50% { opacity: 0.4; filter: brightness(0.8); } }
+        
+        @keyframes pulse-slow { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
-        /* BOTONES NEON */
+        /* BOTONES */
         .btn-raid, .btn-way { opacity: 0.15; pointer-events: none; transition: all 0.3s; filter: grayscale(1); }
         .enabled { opacity: 1 !important; pointer-events: auto !important; filter: grayscale(0) !important; }
         .btn-raid { width: 85px; height: 85px; border-radius: 50%; display: flex; flex-direction: column; align-items: center; justify-content: center; border: 3px solid transparent; }
-        .btn-easy { border-color: var(--led-green); color: var(--led-green); box-shadow: inset 0 0 10px rgba(0,255,136,0.2); }
-        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); box-shadow: inset 0 0 10px rgba(250,204,21,0.2); }
-        .btn-hard { border-color: var(--led-red); color: var(--led-red); box-shadow: inset 0 0 10px rgba(255,62,62,0.2); }
+        .btn-easy { border-color: var(--led-green); color: var(--led-green); }
+        .btn-medium { border-color: var(--led-yellow); color: var(--led-yellow); }
+        .btn-hard { border-color: var(--led-red); color: var(--led-red); }
         .btn-way { width: 100%; padding: 16px; border-radius: 15px; border: 2px solid var(--p-glow); color: var(--p-glow); background: rgba(188, 19, 254, 0.1); font-weight: 900; text-transform: uppercase; font-size: 11px; margin-top: 10px; }
 
         #timer-display { font-family: 'JetBrains Mono'; font-weight: 700; font-size: 1.8rem; color: var(--led-cyan); text-shadow: 0 0 15px var(--led-cyan); transition: all 0.2s; }
-        .timer-critical { color: var(--led-red) !important; text-shadow: 0 0 20px var(--led-red) !important; animation: shake 0.2s infinite; }
-        @keyframes shake { 0% { transform: translate(1px, 1px); } 25% { transform: translate(-1px, -1px); } 50% { transform: translate(-1px, 1px); } 75% { transform: translate(1px, -1px); } 100% { transform: translate(1px, 1px); } }
+        .timer-critical { color: var(--led-red) !important; animation: shake 0.2s infinite; }
+        @keyframes shake { 0%, 100% { transform: translate(0,0); } 25% { transform: translate(-1px, 1px); } 75% { transform: translate(1px, -1px); } }
 
         .log-container { background: rgba(0, 0, 0, 0.5); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 1.2rem; font-family: 'JetBrains Mono'; font-size: 0.75rem; padding: 1rem; flex-grow: 1; overflow-y: auto; }
-        .exit-btn { font-size: 8px; font-weight: 900; color: #ff3e3e; border: 1px solid rgba(255, 62, 62, 0.3); padding: 4px 8px; border-radius: 8px; margin-top: 12px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -86,9 +85,9 @@
 
         <div class="glass-panel">
             <div class="text-center">
-                <p id="roomDisplay" class="text-[8px] text-purple-400/50 mb-1 uppercase font-bold tracking-widest">PRIVATE SERVER CONNECTED</p>
+                <p class="text-[8px] text-purple-400/50 mb-1 uppercase font-bold tracking-widest">KITSU GLOBAL HUB ACTIVE</p>
                 <h1 class="text-2xl font-black italic mb-1 pro-title">DUNGEON CONTROL</h1>
-                <input type="text" id="userName" placeholder="NICKNAME" maxlength="8" class="bg-black/60 border border-purple-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-purple-400">
+                <input type="text" id="userName" placeholder="TU NICKNAME" maxlength="8" class="bg-black/60 border border-purple-500/50 text-white text-[10px] p-2 rounded mb-3 font-mono outline-none w-2/3 text-center uppercase focus:border-purple-400">
             </div>
 
             <div class="game-selector">
@@ -111,10 +110,6 @@
             </div>
 
             <div id="log" class="log-container"></div>
-            
-            <div class="flex justify-center">
-                <button onclick="exitRoom()" class="exit-btn uppercase">Salir de la sala</button>
-            </div>
         </div>
 
         <div class="online-sidebar">
@@ -124,16 +119,15 @@
     </div>
 
     <script>
-        const ROOM_ID = sessionStorage.getItem('dungeon_room');
-        const ROOM_PIN = sessionStorage.getItem('dungeon_pin');
+        // CONFIGURACIÓN DE SALA FIJA
+        const ROOM_ID = 'GLOBAL_ARENA'; 
+        const ROOM_PIN = 'PUBLIC';
         const CLOUDFLARE_URL = 'https://dungeon-hub-core.kitsu-devworks.workers.dev/'; 
         const PUSHER_KEY = '78831e6e7f703ddd4fb2';
 
-        if (!ROOM_ID) window.location.href = 'index.html';
-        document.getElementById('roomDisplay').innerText = `SALA PRIVADA: ${ROOM_ID}`;
-
         let currentMode = 'SL', isTimerActive = false, onlineUsers = {}, hasConfirmedWay = false;
 
+        // Persistencia de misiones local
         let savedMissions = localStorage.getItem('kitsu_mission_order');
         let missions = savedMissions ? JSON.parse(savedMissions) : [
             { id: 'DUNGEON', name: 'DUNGEON', active: true },
@@ -143,7 +137,12 @@
 
         const nameField = document.getElementById('userName');
         const volControl = document.getElementById('volControl');
-        const soundUrls = { EASY: "https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3", MEDIUM: "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3", HARD: "https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3", WAY: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" };
+        const soundUrls = { 
+            EASY: "https://assets.mixkit.co/active_storage/sfx/2567/2567-preview.mp3", 
+            MEDIUM: "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3", 
+            HARD: "https://assets.mixkit.co/active_storage/sfx/2573/2573-preview.mp3", 
+            WAY: "https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" 
+        };
 
         const pusher = new Pusher(PUSHER_KEY, { cluster: 'us2', forceTLS: true });
         const channel = pusher.subscribe(`dungeon-room-${ROOM_ID}-${ROOM_PIN}`);
@@ -174,7 +173,11 @@
             }
         }
 
-        function setMode(mode) { currentMode = mode; document.getElementById('modeSL').classList.toggle('active', mode === 'SL'); document.getElementById('modeOP').classList.toggle('active', mode === 'OP'); }
+        function setMode(mode) { 
+            currentMode = mode; 
+            document.getElementById('modeSL').classList.toggle('active', mode === 'SL'); 
+            document.getElementById('modeOP').classList.toggle('active', mode === 'OP'); 
+        }
 
         function playAlert(type) {
             const audio = new Audio(soundUrls[type]);
@@ -182,23 +185,24 @@
             audio.play().catch(() => {});
         }
 
-        async function sendLobbyPulse() {
-            try { fetch(CLOUDFLARE_URL, { method: 'POST', body: JSON.stringify({ roomName: ROOM_ID, user: "PULSE" }), headers: { 'Content-Type': 'application/json' } }); } catch (e) {}
-        }
-
         channel.bind('client-sos', (data) => {
             let payload = typeof data === 'string' ? JSON.parse(data) : data;
             if(!payload.user || payload.user === 'PULSE') return;
-            const [name, type, missionChain, gameMode] = payload.user.split('|');
+            
+            const parts = payload.user.split('|');
+            if(parts.length < 2) return;
+            
+            const [name, type, missionChain, gameMode] = parts;
             onlineUsers[name.toUpperCase()] = Date.now();
             renderOnline();
+
             if (type !== 'PULSE') {
                 playAlert(type);
                 const colors = { EASY: '#00ff88', MEDIUM: '#facc15', HARD: '#ff3e3e', WAY: '#00f2ff' };
-                if (type === 'WAY') { addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors[type]); } 
-                else { 
+                if (type === 'WAY') { 
+                    addLog(`${name.toUpperCase()} VA EN CAMINO!`, colors[type]); 
+                } else { 
                     startTimer(); 
-                    // Lógica de formateo inteligente para el Log
                     const formattedMissions = missionChain.split(' y ').map(m => {
                         if (m === 'DUNGEON') return `[${gameMode === 'SL' ? 'SoloLeveling' : 'OnePiece'}] DUNGEON ${type}`;
                         return m;
@@ -212,11 +216,17 @@
             const user = nameField.value.trim();
             if (user.length < 2) return;
             if (type === 'WAY') { if (hasConfirmedWay) return; hasConfirmedWay = true; updateUI(); }
+            
             const activeMissions = missions.filter(m => m.active).map(m => m.name).join(' y ');
             try {
                 await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
-                    body: JSON.stringify({ user: `${user}|${type}|${activeMissions || 'MISIÓN'}|${currentMode}`, roomId: ROOM_ID, pin: ROOM_PIN })
+                    body: JSON.stringify({ 
+                        user: `${user}|${type}|${activeMissions || 'MISIÓN'}|${currentMode}`, 
+                        roomId: ROOM_ID, 
+                        pin: ROOM_PIN 
+                    }),
+                    headers: { 'Content-Type': 'application/json' }
                 });
             } catch (e) { if (type === 'WAY') hasConfirmedWay = false; }
         }
@@ -232,7 +242,12 @@
                 s--; 
                 document.getElementById('timer-count').innerText = s;
                 if (s <= 10) display.classList.add('timer-critical');
-                if (s <= 0) { clearInterval(window.countdown); isTimerActive = false; display.classList.replace('opacity-100', 'opacity-0'); display.classList.remove('timer-critical'); updateUI(); }
+                if (s <= 0) { 
+                    clearInterval(window.countdown); 
+                    isTimerActive = false; 
+                    display.classList.replace('opacity-100', 'opacity-0'); 
+                    updateUI(); 
+                }
             }, 1000);
         }
 
@@ -244,8 +259,9 @@
 
         function renderOnline() {
             let html = '', count = 0;
+            const now = Date.now();
             for (let u in onlineUsers) {
-                if (Date.now() - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
+                if (now - onlineUsers[u] > 40000) { delete onlineUsers[u]; continue; }
                 html += `<div class="flex items-center gap-2 text-[9px] text-purple-400 mb-1"><div class="online-dot"></div>${u}</div>`;
                 count++;
             }
@@ -260,15 +276,18 @@
             log.innerHTML = `<div style="color:${color}; margin-bottom: 2px; font-family: 'JetBrains Mono';">> ${timeStr} ${msg}</div>` + log.innerHTML;
         }
 
-        function exitRoom() { sessionStorage.clear(); window.location.href = 'index.html'; }
-
         nameField.addEventListener('input', updateUI);
         volControl.addEventListener('input', (e) => document.getElementById('volLabel').innerText = Math.round(e.target.value * 100) + "%");
+        
         renderMissions();
-        setInterval(sendLobbyPulse, 15000);
-        sendLobbyPulse();
-        setInterval(() => { if (nameField.value.trim().length >= 2) sendSignal('PULSE'); }, 10000);
-        addLog("System Online...", "#bc13fe");
+        addLog("Conectado al Hub Global...", "#bc13fe");
+
+        // Loop de presencia
+        setInterval(() => { 
+            if (nameField.value.trim().length >= 2) sendSignal('PULSE'); 
+            renderOnline();
+        }, 10000);
+
     </script>
 </body>
 </html>
